@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "AE脚本自动编译",
+			"type": "shell",
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": false,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": true
+			},
+			"command": "npm run build",
+			"runOptions": {}
+		}
+	]
+}

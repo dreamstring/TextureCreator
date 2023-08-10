@@ -1,0 +1,22 @@
+# 忽略配置文件
+# config/
+
+# 忽略日志文件
+logs/
+
+# 忽略构建产物
+# dist/
+# build/
+
+# 忽略依赖库
+# node_modules/
+# .package-lock.json
+
+# 忽略IDE生成的文件
+# .vscode/
+#.idea/
+
+# 忽略缓存文件
+.npm/
+yarn.lock
+.cache

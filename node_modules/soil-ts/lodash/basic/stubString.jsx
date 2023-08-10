@@ -1,0 +1,4 @@
+function stubString() {
+    return "";
+}
+export default stubString;
