@@ -169,6 +169,7 @@ function createComp() {
 }
 
 function apply() {
+	activeItem = _.getActiveItem();
 	let compNameIndex = (textureName_dropDownList.selection as ListItem).index;
 	let compName =
 		textureNameArray[compNameIndex];
@@ -182,4 +183,5 @@ function apply() {
 	targetComp.height = compHeight;
 	let parentFolder = getCategoryFolder(parentFolderName);
 	targetComp.parentFolder = parentFolder;
+	targetComp.openInViewer();
 }

@@ -1,4 +1,4 @@
-// 2023/8/10 23:19:15
+// 2023/8/10 23:29:55
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -1050,6 +1050,7 @@
         targetComp.openInViewer();
     }
     function apply() {
+        activeItem = getActiveItem();
         var compNameIndex = textureName_dropDownList.selection.index;
         var compName = textureNameArray[compNameIndex];
         var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
@@ -1060,5 +1061,6 @@
         targetComp.height = compHeight;
         var parentFolder = getCategoryFolder(parentFolderName);
         targetComp.parentFolder = parentFolder;
+        targetComp.openInViewer();
     }
 }).call(this);
