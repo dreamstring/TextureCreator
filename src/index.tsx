@@ -112,6 +112,10 @@ let UISource = {
 	}
 };
 
+let activeItem = _.getActiveItem();
+let items = _.get(app, ['project', 'items']) as ItemCollection;
+let rootFolder = _.get(app, ['project', 'rootFolder']) as FolderItem;
+
 let elements = _.tree.parse(UISource);
 let textureWidth_dropDownList = (elements.getElementById(
 	'textureWidth_dropDownList'
@@ -123,27 +127,59 @@ let textureName_dropDownList = (elements.getElementById(
 	'textureName_dropDownList'
 ) as unknown) as DropDownList;
 
-let compName =
-	textureNameArray[(textureName_dropDownList.selection as ListItem).index];
-let compWidth =
-	textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
-let compHeight =
-	textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
+function existCategoryFolder(folder: FolderItem, inputName: string) {
+	let result = { exist: false, folder: folder };
+	_.eachItems(folder, function (file) {
+		if (file.name === inputName) {
+			result.exist = true;
+			result.folder = file as FolderItem;
+		}
+	})
+	return result;
+}
 
-let activeItem = _.getActiveItem();
-let items = _.get(app, ['project', 'items']);
+function getCategoryFolder(parentFolderName: string) {
+	let targetFolder = existCategoryFolder(rootFolder, parentFolderName);
+	return targetFolder.exist ? targetFolder.folder : items.addFolder(parentFolderName);
+}
 
 function refreshTextureSize() {
 	textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 4;
 }
 
+function dataLeftCompleting(originData: number, bits: number, identifier?: string) {
+	identifier = identifier || "0";
+	let finalData = Array(bits + 1).join(identifier) + originData;
+	return finalData.slice(-bits);
+};
+
 function createComp() {
-	items.addComp(compName, compWidth, compHeight, 1, 1 / 30, 30);
+	let compNameIndex = (textureName_dropDownList.selection as ListItem).index;
+	let compName =
+		textureNameArray[compNameIndex];
+	let compWidth =
+		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
+	let compHeight =
+		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
+	let parentFolderName = dataLeftCompleting(compNameIndex, 2) + ' ' + compName;
+	let parentFolder = getCategoryFolder(parentFolderName);
+	let targetComp = items.addComp(compName, compWidth, compHeight, 1, 1 / 30, 30);
+	(targetComp as CompItem).parentFolder = parentFolder;
+	targetComp.openInViewer();
 }
 
 function apply() {
-	if (activeItem) {
-		(activeItem as CompItem).width = compWidth;
-		(activeItem as CompItem).height = compHeight;
-	}
+	let compNameIndex = (textureName_dropDownList.selection as ListItem).index;
+	let compName =
+		textureNameArray[compNameIndex];
+	let compWidth =
+		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
+	let compHeight =
+		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
+	let parentFolderName = dataLeftCompleting(compNameIndex, 2) + ' ' + compName;
+	let targetComp = activeItem as CompItem;
+	targetComp.width = compWidth;
+	targetComp.height = compHeight;
+	let parentFolder = getCategoryFolder(parentFolderName);
+	targetComp.parentFolder = parentFolder;
 }

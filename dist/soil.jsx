@@ -1,4 +1,4 @@
-// 2023/8/10 18:41:28
+// 2023/8/10 23:19:15
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -865,6 +865,23 @@
     function trimNumber(string) {
         return string.replace(/\d/g, "");
     }
+    function collectionEach(collection, iteratee) {
+        var index = 0;
+        var length = collection.length + 1;
+        while (++index < length) {
+            if (iteratee(collection[index], index, collection) === false) {
+                break;
+            }
+        }
+        return collection;
+    }
+    function eachItems(itemCollection, iteratee) {
+        collectionEach(itemCollection.items, function(value, index) {
+            if (iteratee(value, index, itemCollection) === false) {
+                return false;
+            }
+        });
+    }
     function getActiveItem() {
         return app.project.activeItem;
     }
@@ -989,25 +1006,59 @@
             }
         }
     };
+    var activeItem = getActiveItem();
+    var items = get(app, [ "project", "items" ]);
+    var rootFolder = get(app, [ "project", "rootFolder" ]);
     var elements = tree.parse(UISource);
     var textureWidth_dropDownList = elements.getElementById("textureWidth_dropDownList");
     var textureHeight_dropDownList = elements.getElementById("textureHeight_dropDownList");
     var textureName_dropDownList = elements.getElementById("textureName_dropDownList");
-    var compName = textureNameArray[textureName_dropDownList.selection.index];
-    var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
-    var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
-    var activeItem = getActiveItem();
-    var items = get(app, [ "project", "items" ]);
+    function existCategoryFolder(folder, inputName) {
+        var result = {
+            exist: false,
+            folder: folder
+        };
+        eachItems(folder, function(file) {
+            if (file.name === inputName) {
+                result.exist = true;
+                result.folder = file;
+            }
+        });
+        return result;
+    }
+    function getCategoryFolder(parentFolderName) {
+        var targetFolder = existCategoryFolder(rootFolder, parentFolderName);
+        return targetFolder.exist ? targetFolder.folder : items.addFolder(parentFolderName);
+    }
     function refreshTextureSize() {
         textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 4;
     }
+    function dataLeftCompleting(originData, bits, identifier) {
+        identifier = identifier || "0";
+        var finalData = Array(bits + 1).join(identifier) + originData;
+        return finalData.slice(-bits);
+    }
     function createComp() {
-        items.addComp(compName, compWidth, compHeight, 1, 1 / 30, 30);
+        var compNameIndex = textureName_dropDownList.selection.index;
+        var compName = textureNameArray[compNameIndex];
+        var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
+        var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
+        var parentFolderName = dataLeftCompleting(compNameIndex, 2) + " " + compName;
+        var parentFolder = getCategoryFolder(parentFolderName);
+        var targetComp = items.addComp(compName, compWidth, compHeight, 1, 1 / 30, 30);
+        targetComp.parentFolder = parentFolder;
+        targetComp.openInViewer();
     }
     function apply() {
-        if (activeItem) {
-            activeItem.width = compWidth;
-            activeItem.height = compHeight;
-        }
+        var compNameIndex = textureName_dropDownList.selection.index;
+        var compName = textureNameArray[compNameIndex];
+        var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
+        var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
+        var parentFolderName = dataLeftCompleting(compNameIndex, 2) + " " + compName;
+        var targetComp = activeItem;
+        targetComp.width = compWidth;
+        targetComp.height = compHeight;
+        var parentFolder = getCategoryFolder(parentFolderName);
+        targetComp.parentFolder = parentFolder;
     }
 }).call(this);
