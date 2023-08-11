@@ -1,4 +1,4 @@
-// 2023/8/10 23:29:55
+// 2023/8/11 21:29:47
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -6,14 +6,15 @@
     var nativeConcat = arrayProto.concat;
     var nativeSlice = arrayProto.slice;
     var nativeToString = objectProto.toString;
+    var nativeParseInt = parseInt;
+    var NAN = 0 / 0;
     var INFINITY = 1 / 0;
     var MAX_SAFE_INTEGER = 9007199254740991;
+    var reTrim = /^\s+|\s+$/g;
+    var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+    var reIsBinary = /^0b[01]+$/i;
+    var reIsOctal = /^0o[0-7]+$/i;
     var reFlags = /\w*$/;
-    var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
-    var reIsPlainProp = /^\w*$/;
-    var charCodeOfDot = ".".charCodeAt(0);
-    var reEscapeChar = /\\(\\)?/g;
-    var rePropName = /[^.[\]]+|\[(?:([^"'][^[]*)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
     var reIsUint = /^(?:0|[1-9]\d*)$/;
     function has(object, key) {
         return object != null && hasOwnProperty.call(object, key);
@@ -71,61 +72,6 @@
         }
         return false;
     }
-    function isKey(value, object) {
-        if (isArray(value)) {
-            return false;
-        }
-        var type = typeof value;
-        if (type === "number" || type === "boolean" || value == null) {
-            return true;
-        }
-        return or(reIsPlainProp.test(value), !reIsDeepProp.test(value), object != null && value in Object(object));
-    }
-    function trimString(string) {
-        return string.replace(/^\s+/, "").replace(/\s+$/, "");
-    }
-    function stringToPath(string) {
-        var result = [];
-        if (string.charCodeAt(0) === charCodeOfDot) {
-            result.push("");
-        }
-        string.replace(rePropName, function(match, expression, quote, subString) {
-            var key = match;
-            if (quote) {
-                key = subString.replace(reEscapeChar, "$1");
-            } else if (expression) {
-                key = trimString(expression);
-            }
-            result.push(key);
-        });
-        return result;
-    }
-    function castPath(value, object) {
-        if (isArray(value)) {
-            return value;
-        }
-        return isKey(value, object) ? [ value ] : stringToPath(value);
-    }
-    function toKey(value) {
-        if (typeof value === "string") {
-            return value;
-        }
-        var result = "".concat(value);
-        return result == "0" && 1 / value == -INFINITY ? "-0" : result;
-    }
-    function baseGet$1(object, path) {
-        var partial = castPath(path, object);
-        var index = 0;
-        var length = partial.length;
-        while (object != null && index < length) {
-            object = object[toKey(partial[index++])];
-        }
-        return index && index == length ? object : undefined;
-    }
-    function get(object, path, defaultValue) {
-        var result = object == null ? undefined : baseGet$1(object, path);
-        return result === undefined ? defaultValue : result;
-    }
     function stubFalse() {
         return false;
     }
@@ -180,6 +126,36 @@
             }
         }
         return result;
+    }
+    function toString(value) {
+        if (value == null) {
+            return "";
+        }
+        if (typeof value === "string") {
+            return value;
+        }
+        if (isArray(value)) {
+            return "".concat(map(value, function(other) {
+                return other == null ? other : toString(other);
+            }));
+        }
+        var result = "".concat(value);
+        return result == "0" && 1 / Number(value) == -INFINITY ? "-0" : result;
+    }
+    function toNumber(value) {
+        if (typeof value === "number") {
+            return value;
+        }
+        if (isObject(value)) {
+            var other = typeof value.valueOf === "function" ? value.valueOf() : value;
+            value = isObject(other) ? "".concat(other) : other;
+        }
+        if (typeof value !== "string") {
+            return value === 0 ? value : +value;
+        }
+        value = value.replace(reTrim, "");
+        var isBinary = reIsBinary.test(value);
+        return isBinary || reIsOctal.test(value) ? nativeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
     }
     function arrayEach(array, iteratee) {
         var index = -1;
@@ -898,9 +874,9 @@
             alignment: [ "fill", "fill" ]
         },
         group1: {
+            param: [ "textureSize_group" ],
             margins: 0,
             spacing: 0,
-            param: [ "textureSize_group" ],
             style: {
                 orientation: "row",
                 alignment: [ "fill", "top" ]
@@ -961,31 +937,67 @@
             }
         },
         group2: {
+            param: [ "textureName_group" ],
             margins: 0,
             spacing: 0,
-            param: [ "textureName_group" ],
             style: {
                 orientation: "row",
                 alignment: [ "fill", "top" ]
             },
-            statictext: {
+            group1: {
+                margins: 0,
+                spacing: 0,
                 style: {
-                    alignment: [ "left", "center" ]
+                    orientation: "row",
+                    alignment: [ "fill", "top" ]
                 },
-                param: [ undefined, [ 0, 0, 36, globalHeight ], "Name: " ]
+                statictext: {
+                    style: {
+                        alignment: [ "left", "center" ]
+                    },
+                    param: [ undefined, [ 0, 0, 36, globalHeight ], "Name: " ]
+                },
+                dropDownList: {
+                    style: {
+                        alignment: [ "fill", "fill" ],
+                        selection: 0
+                    },
+                    param: [ "textureName_dropDownList", [ 0, 0, 50, globalHeight ], textureNameArray ]
+                }
             },
-            dropDownList: {
+            group2: {
+                margins: 0,
+                spacing: 0,
                 style: {
-                    alignment: [ "fill", "fill" ],
-                    selection: 0
+                    orientation: "row",
+                    alignment: [ "fill", "top" ]
                 },
-                param: [ "textureName_dropDownList", [ 0, 0, 50, globalHeight ], textureNameArray ]
+                statictext: {
+                    style: {
+                        alignment: [ "left", "center" ]
+                    },
+                    param: [ "digits_Statictext", [ 0, 0, 46, globalHeight ], "Digits: 2" ]
+                },
+                scrollbar: {
+                    style: {
+                        alignment: [ "fill", "center" ],
+                        selection: 0
+                    },
+                    param: [ "digits_Scrollbar", [ 0, 0, 140, 10 ], 2, 0, 6 ]
+                }
+            },
+            button: {
+                style: {
+                    alignment: [ "right", "center" ],
+                    onClick: refreshScrollbar
+                },
+                param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
             }
         },
         group3: {
+            param: [ "method_group" ],
             margins: 0,
             spacing: 0,
-            param: [ "buttons_group" ],
             style: {
                 orientation: "row",
                 alignment: [ "fill", "top" ]
@@ -1004,15 +1016,67 @@
                 },
                 param: [ "Apply", [ 0, 0, 22, globalHeight ], "Apply" ]
             }
+        },
+        group4: {
+            param: [ "render_group", [ 0, 0, 50, 22 ] ],
+            margins: 0,
+            spacing: 0,
+            style: {
+                orientation: "row",
+                alignment: [ "fill", "top" ]
+            },
+            group: {
+                param: [ "render_group", [ 0, -6, 50, 22 ] ],
+                style: {
+                    orientation: "stack",
+                    alignment: [ "left", "top" ]
+                },
+                group: {
+                    style: {
+                        orientation: "row",
+                        alignment: [ "left", "center" ]
+                    },
+                    checkbox1: {
+                        style: {
+                            alignment: [ "left", "center" ],
+                            value: true
+                        },
+                        param: [ "PNG_Checkbox", undefined, "PNG" ]
+                    },
+                    checkbox2: {
+                        style: {
+                            alignment: [ "left", "center" ],
+                            value: false
+                        },
+                        param: [ "TGA_Checkbox", undefined, "TGA" ]
+                    }
+                }
+            },
+            button: {
+                style: {
+                    alignment: [ "fill", "top" ],
+                    onClick: render
+                },
+                param: [ "Rrender", [ 0, 0, 22, globalHeight ], "Render" ]
+            }
         }
     };
     var activeItem = getActiveItem();
-    var items = get(app, [ "project", "items" ]);
-    var rootFolder = get(app, [ "project", "rootFolder" ]);
+    var items = app.project.items;
+    var rootFolder = app.project.rootFolder;
+    var renderQueueItems = app.project.renderQueue.items;
     var elements = tree.parse(UISource);
     var textureWidth_dropDownList = elements.getElementById("textureWidth_dropDownList");
     var textureHeight_dropDownList = elements.getElementById("textureHeight_dropDownList");
     var textureName_dropDownList = elements.getElementById("textureName_dropDownList");
+    var PNG_Checkbox = elements.getElementById("PNG_Checkbox");
+    var TGA_Checkbox = elements.getElementById("TGA_Checkbox");
+    var digits_Statictext = elements.getElementById("digits_Statictext");
+    var digits_Scrollbar = elements.getElementById("digits_Scrollbar");
+    digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;
+    function refreshDigitsText() {
+        digits_Statictext.text = "Digits: " + toString(digits_Scrollbar.value.toFixed(0));
+    }
     function existCategoryFolder(folder, inputName) {
         var result = {
             exist: false,
@@ -1033,6 +1097,10 @@
     function refreshTextureSize() {
         textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 4;
     }
+    function refreshScrollbar() {
+        digits_Scrollbar.value = 2;
+        refreshDigitsText();
+    }
     function dataLeftCompleting(originData, bits, identifier) {
         identifier = identifier || "0";
         var finalData = Array(bits + 1).join(identifier) + originData;
@@ -1045,7 +1113,8 @@
         var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
         var parentFolderName = dataLeftCompleting(compNameIndex, 2) + " " + compName;
         var parentFolder = getCategoryFolder(parentFolderName);
-        var targetComp = items.addComp(compName, compWidth, compHeight, 1, 1 / 30, 30);
+        var finalCompName = getFinalCompName(compName, compWidth, compHeight, parentFolder);
+        var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
         targetComp.parentFolder = parentFolder;
         targetComp.openInViewer();
     }
@@ -1057,10 +1126,101 @@
         var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
         var parentFolderName = dataLeftCompleting(compNameIndex, 2) + " " + compName;
         var targetComp = activeItem;
+        var parentFolder = getCategoryFolder(parentFolderName);
+        var finalCompName = getFinalCompName(compName, compWidth, compHeight, parentFolder);
         targetComp.width = compWidth;
         targetComp.height = compHeight;
-        var parentFolder = getCategoryFolder(parentFolderName);
+        targetComp.name = finalCompName;
         targetComp.parentFolder = parentFolder;
         targetComp.openInViewer();
+    }
+    function render() {
+        protectiveSave();
+        activeItem = getActiveItem();
+        if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value)) {
+            renderQueueItems.add(activeItem);
+        }
+        var targetRenderQueueItem = renderQueueItems[renderQueueItems.length];
+        var numOutputModules = targetRenderQueueItem.numOutputModules;
+        var pngFile, tgaFile;
+        if (PNG_Checkbox.value && TGA_Checkbox.value) {
+            targetRenderQueueItem.outputModules.add();
+        }
+        if (PNG_Checkbox.value) {
+            var targetTemplateName = "PNG";
+            var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+        }
+        if (TGA_Checkbox.value) {
+            var targetTemplateName = "TGA";
+            var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+        }
+        startRender();
+        if (pngFile) {
+            fixRenderFile(File(pngFile.fsName + ".png00000"));
+        }
+        if (tgaFile) {
+            fixRenderFile(File(tgaFile.fsName + ".tga00000"));
+        }
+    }
+    function getTargetCompName(compName, compWidth, compHeight, index) {
+        return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
+    }
+    function getFinalCompName(compName, compWidth, compHeight, parentFolder) {
+        var compIndex = 0;
+        eachItems(parentFolder, function(compItem) {
+            var nameArray = compItem.name.split("_");
+            var compItemSize = nameArray[nameArray.length - 2];
+            var compItemWidth = compItemSize.split("x")[0];
+            var compItemHeight = compItemSize.split("x")[1];
+            var compItemIndex = toNumber(nameArray[nameArray.length - 1]);
+            if (compWidth == toNumber(compItemWidth) && compHeight == toNumber(compItemHeight) && compItemIndex === compIndex) {
+                compIndex++;
+            }
+        });
+        return getTargetCompName(compName, compWidth, compHeight, dataLeftCompleting(compIndex, toNumber(digits_Scrollbar.value.toFixed(0))));
+    }
+    function applyTargetTemplate(targetOutputModule, targetTemplateName) {
+        activeItem = getActiveItem();
+        var templatesArray = targetOutputModule.templates;
+        var existTemplate = false;
+        forEach(templatesArray, function(value) {
+            if (value === targetTemplateName) {
+                existTemplate = true;
+            }
+        });
+        if (existTemplate) {
+            targetOutputModule.applyTemplate(targetTemplateName);
+        }
+        var outputFolderPath = app.project.file.path + "//" + activeItem.parentFolder.name;
+        var outputFile = File(getFolder(outputFolderPath).fsName + "//" + activeItem.name);
+        return targetOutputModule.file = outputFile;
+    }
+    function protectiveSave() {
+        if (app.project.file === null) {
+            app.project.save();
+        }
+        if (app.project.dirty) {
+            app.project.save();
+        }
+    }
+    function getFolder(folderPath) {
+        var folder = new Folder(folderPath);
+        if (!folder.exists) {
+            folder.create();
+        }
+        return folder;
+    }
+    function startRender() {
+        app.project.renderQueue.render();
+    }
+    function fixRenderFile(renderFile) {
+        if (!renderFile.exists) {
+            return;
+        }
+        var oldName = renderFile.displayName;
+        var newName = oldName.split(".")[0] + "." + oldName.split(".")[1].substring(0, 3);
+        renderFile.rename(newName);
     }
 }).call(this);
