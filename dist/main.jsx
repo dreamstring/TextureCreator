@@ -1,4 +1,4 @@
-// 2023/8/11 21:29:47
+// 2023/8/13 03:09:37
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -858,13 +858,27 @@
             }
         });
     }
+    function collectionEachRight(collection, iteratee) {
+        var index = collection.length + 1;
+        while (--index) {
+            if (iteratee(collection[index], index, collection) === false) {
+                break;
+            }
+        }
+        return collection;
+    }
+    function eachLayersRight(compItem, iteratee) {
+        collectionEachRight(compItem.layers, function(value, index) {
+            if (iteratee(value, index, compItem) === false) {
+                return false;
+            }
+        });
+    }
     function getActiveItem() {
         return app.project.activeItem;
     }
-    var textureSizeArray;
-    textureSizeArray = [ 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
-    var textureNameArray;
-    textureNameArray = [ "Glow", "Light", "Mask", "Noise", "Trail", "Turbulence" ];
+    var textureSizeArray = [ 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
+    var textureNameArray = [ "Glow", "Light", "Mask", "Noise", "Trail", "Turbulence" ];
     var globalHeight = 22;
     var UISource = {
         style: {
@@ -1012,7 +1026,14 @@
             button2: {
                 style: {
                     alignment: [ "fill", "fill" ],
-                    onClick: apply
+                    onClick: duplicateComp
+                },
+                param: [ "Duplicate", [ 0, 0, 22, globalHeight ], "Duplicate" ]
+            },
+            button3: {
+                style: {
+                    alignment: [ "fill", "fill" ],
+                    onClick: changeComp
                 },
                 param: [ "Apply", [ 0, 0, 22, globalHeight ], "Apply" ]
             }
@@ -1107,27 +1128,44 @@
         return finalData.slice(-bits);
     }
     function createComp() {
-        var compNameIndex = textureName_dropDownList.selection.index;
-        var compName = textureNameArray[compNameIndex];
+        var categoryFolderIndex = textureName_dropDownList.selection.index;
+        var categoryFolderName = textureNameArray[categoryFolderIndex];
         var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
         var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
-        var parentFolderName = dataLeftCompleting(compNameIndex, 2) + " " + compName;
+        var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
         var parentFolder = getCategoryFolder(parentFolderName);
-        var finalCompName = getFinalCompName(compName, compWidth, compHeight, parentFolder);
+        var finalCompName = getFinalCompName(categoryFolderName, compWidth, compHeight, parentFolder);
         var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
         targetComp.parentFolder = parentFolder;
         targetComp.openInViewer();
     }
-    function apply() {
+    function duplicateComp() {
         activeItem = getActiveItem();
-        var compNameIndex = textureName_dropDownList.selection.index;
-        var compName = textureNameArray[compNameIndex];
+        var nameArray = activeItem.name.split("_");
+        var compName = nameArray[1];
+        var compSize = nameArray[nameArray.length - 2];
+        var compWidth = toNumber(compSize.split("x")[0]);
+        var compHeight = toNumber(compSize.split("x")[1]);
+        var originComp = activeItem;
+        var parentFolder = originComp.parentFolder;
+        var finalCompName = getFinalCompName(compName, compWidth, compHeight, parentFolder);
+        var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
+        targetComp.parentFolder = parentFolder;
+        eachLayersRight(originComp, function(layer) {
+            layer.copyToComp(targetComp);
+        });
+        targetComp.openInViewer();
+    }
+    function changeComp() {
+        activeItem = getActiveItem();
+        var categoryFolderIndex = textureName_dropDownList.selection.index;
+        var categoryFolderName = textureNameArray[categoryFolderIndex];
         var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
         var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
-        var parentFolderName = dataLeftCompleting(compNameIndex, 2) + " " + compName;
+        var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
         var targetComp = activeItem;
         var parentFolder = getCategoryFolder(parentFolderName);
-        var finalCompName = getFinalCompName(compName, compWidth, compHeight, parentFolder);
+        var finalCompName = getFinalCompName(categoryFolderName, compWidth, compHeight, parentFolder);
         targetComp.width = compWidth;
         targetComp.height = compHeight;
         targetComp.name = finalCompName;
@@ -1135,6 +1173,7 @@
         targetComp.openInViewer();
     }
     function render() {
+        permissionDialog();
         protectiveSave();
         activeItem = getActiveItem();
         if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value)) {
@@ -1149,19 +1188,21 @@
         if (PNG_Checkbox.value) {
             var targetTemplateName = "PNG";
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
             pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
         }
         if (TGA_Checkbox.value) {
             var targetTemplateName = "TGA";
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
             tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
         }
         startRender();
         if (pngFile) {
-            fixRenderFile(File(pngFile.fsName + ".png00000"));
+            fixRenderFile(File(pngFile.fsName + ".png00000"), ".png00000", ".png");
         }
         if (tgaFile) {
-            fixRenderFile(File(tgaFile.fsName + ".tga00000"));
+            fixRenderFile(File(tgaFile.fsName + ".tga00000"), ".tga00000", ".tga");
         }
     }
     function getTargetCompName(compName, compWidth, compHeight, index) {
@@ -1193,8 +1234,14 @@
         if (existTemplate) {
             targetOutputModule.applyTemplate(targetTemplateName);
         }
+        if (!existTemplate) {
+            alert("Please create ".concat(targetTemplateName, " output module first."));
+            app.executeCommand(2150);
+        }
         var outputFolderPath = app.project.file.path + "//" + activeItem.parentFolder.name;
-        var outputFile = File(getFolder(outputFolderPath).fsName + "//" + activeItem.name);
+        var outputFile = new File(getFolder(outputFolderPath).fsName + "//" + activeItem.name);
+        targetOutputModule.includeSourceXMP = false;
+        targetOutputModule.postRenderAction = PostRenderAction.NONE;
         return targetOutputModule.file = outputFile;
     }
     function protectiveSave() {
@@ -1215,12 +1262,36 @@
     function startRender() {
         app.project.renderQueue.render();
     }
-    function fixRenderFile(renderFile) {
+    function fixRenderFile(renderFile, wrongString, rightString) {
         if (!renderFile.exists) {
             return;
         }
         var oldName = renderFile.displayName;
-        var newName = oldName.split(".")[0] + "." + oldName.split(".")[1].substring(0, 3);
-        renderFile.rename(newName);
+        if (oldName.search(wrongString)) {
+            renderFile.rename(oldName.replace(wrongString, rightString));
+        }
+    }
+    function isSecurityPrefSet() {
+        try {
+            var securitySetting = app.preferences.getPrefAsLong("Main Pref Section", "Pref_SCRIPTING_FILE_NETWORK_SECURITY");
+            return securitySetting == 1;
+        } catch (e) {
+            return true;
+        }
+    }
+    function permissionDialog() {
+        if (!isSecurityPrefSet()) {
+            alert("This script requires access to write files.\n Go to the  General  panel of the application preferences and make sure 「Allow Scripts to Write Files and Access Network」 is checked.");
+            protectiveTry(function() {
+                app.executeCommand(3131);
+            });
+        }
+    }
+    function protectiveTry(callback) {
+        try {
+            callback();
+        } catch (e) {
+            alert(e);
+        }
     }
 }).call(this);

@@ -1,18 +1,25 @@
 import * as _ from 'soil-ts';
 
-let textureSizeArray: number[];
-textureSizeArray = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-let textureNameArray: string[];
-textureNameArray = ['Glow', 'Light', 'Mask', 'Noise', 'Trail', 'Turbulence'];
+const textureSizeArray: number[] = [
+	16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
+];
+const textureNameArray: string[] = [
+	'Glow',
+	'Light',
+	'Mask',
+	'Noise',
+	'Trail',
+	'Turbulence',
+];
 
-let globalHeight = 22;
+const globalHeight = 22;
 
 let UISource = {
 	style: {
 		margins: 5,
 		spacing: 5,
 		orientation: 'column',
-		alignment: ['fill', 'fill']
+		alignment: ['fill', 'fill'],
 	},
 	group1: {
 		param: ['textureSize_group'],
@@ -20,23 +27,23 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top']
+			alignment: ['fill', 'top'],
 		},
 		statictext: {
 			style: { alignment: ['left', 'center'] },
-			param: [undefined, [0, 0, 26, globalHeight], 'Size: ']
+			param: [undefined, [0, 0, 26, globalHeight], 'Size: '],
 		},
 		group: {
 			style: {
 				orientation: 'stack',
-				alignment: ['fill', 'center']
+				alignment: ['fill', 'center'],
 			},
 			group1: {
 				style: {
 					margins: 0,
 					spacing: 20,
 					orientation: 'row',
-					alignment: ['fill', 'center']
+					alignment: ['fill', 'center'],
 				},
 				param: ['textureSize', [0, 0, 200, globalHeight]],
 				dropDownList1: {
@@ -44,33 +51,36 @@ let UISource = {
 					param: [
 						'textureWidth_dropDownList',
 						[0, 0, 50, globalHeight],
-						textureSizeArray
-					]
+						textureSizeArray,
+					],
 				},
 				dropDownList2: {
 					style: { alignment: ['fill', 'fill'], selection: 4 },
 					param: [
 						'textureHeight_dropDownList',
 						[0, 0, 50, globalHeight],
-						textureSizeArray
-					]
-				}
+						textureSizeArray,
+					],
+				},
 			},
 			group2: {
 				style: {
 					orientation: 'row',
-					alignment: ['center', 'center']
+					alignment: ['center', 'center'],
 				},
 				statictext1: {
 					style: { alignment: ['center', 'center'] },
-					param: [undefined, [0, 0, 12, globalHeight], ' x']
-				}
-			}
+					param: [undefined, [0, 0, 12, globalHeight], ' x'],
+				},
+			},
 		},
 		button: {
-			style: { alignment: ['right', 'center'], onClick: refreshTextureSize },
-			param: [undefined, [0, 0, 22, globalHeight], '↺']
-		}
+			style: {
+				alignment: ['right', 'center'],
+				onClick: refreshTextureSize,
+			},
+			param: [undefined, [0, 0, 22, globalHeight], '↺'],
+		},
 	},
 	group2: {
 		param: ['textureName_group'],
@@ -78,48 +88,55 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top']
+			alignment: ['fill', 'top'],
 		},
 		group1: {
 			margins: 0,
 			spacing: 0,
 			style: {
 				orientation: 'row',
-				alignment: ['fill', 'top']
+				alignment: ['fill', 'top'],
 			},
 			statictext: {
 				style: { alignment: ['left', 'center'] },
-				param: [undefined, [0, 0, 36, globalHeight], 'Name: ']
+				param: [undefined, [0, 0, 36, globalHeight], 'Name: '],
 			},
 			dropDownList: {
 				style: { alignment: ['fill', 'fill'], selection: 0 },
 				param: [
 					'textureName_dropDownList',
 					[0, 0, 50, globalHeight],
-					textureNameArray
-				]
-			}
+					textureNameArray,
+				],
+			},
 		},
 		group2: {
 			margins: 0,
 			spacing: 0,
 			style: {
 				orientation: 'row',
-				alignment: ['fill', 'top']
+				alignment: ['fill', 'top'],
 			},
 			statictext: {
 				style: { alignment: ['left', 'center'] },
-				param: ['digits_Statictext', [0, 0, 46, globalHeight], 'Digits: 2']
+				param: [
+					'digits_Statictext',
+					[0, 0, 46, globalHeight],
+					'Digits: 2',
+				],
 			},
 			scrollbar: {
 				style: { alignment: ['fill', 'center'], selection: 0 },
-				param: ['digits_Scrollbar', [0, 0, 140, 10], 2, 0, 6]
-			}
+				param: ['digits_Scrollbar', [0, 0, 140, 10], 2, 0, 6],
+			},
 		},
 		button: {
-			style: { alignment: ['right', 'center'], onClick: refreshScrollbar },
-			param: [undefined, [0, 0, 22, globalHeight], '↺']
-		}
+			style: {
+				alignment: ['right', 'center'],
+				onClick: refreshScrollbar,
+			},
+			param: [undefined, [0, 0, 22, globalHeight], '↺'],
+		},
 	},
 	group3: {
 		param: ['method_group'],
@@ -127,16 +144,20 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top']
+			alignment: ['fill', 'top'],
 		},
 		button1: {
 			style: { alignment: ['fill', 'fill'], onClick: createComp },
-			param: ['Create', [0, 0, 22, globalHeight], 'Create']
+			param: ['Create', [0, 0, 22, globalHeight], 'Create'],
 		},
 		button2: {
-			style: { alignment: ['fill', 'fill'], onClick: apply },
-			param: ['Apply', [0, 0, 22, globalHeight], 'Apply']
-		}
+			style: { alignment: ['fill', 'fill'], onClick: duplicateComp },
+			param: ['Duplicate', [0, 0, 22, globalHeight], 'Duplicate'],
+		},
+		button3: {
+			style: { alignment: ['fill', 'fill'], onClick: changeComp },
+			param: ['Apply', [0, 0, 22, globalHeight], 'Apply'],
+		},
 	},
 	group4: {
 		param: ['render_group', [0, 0, 50, 22]],
@@ -144,34 +165,34 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top']
+			alignment: ['fill', 'top'],
 		},
 		group: {
 			param: ['render_group', [0, -6, 50, 22]],
 			style: {
 				orientation: 'stack',
-				alignment: ['left', 'top']
+				alignment: ['left', 'top'],
 			},
 			group: {
 				style: {
 					orientation: 'row',
-					alignment: ['left', 'center']
+					alignment: ['left', 'center'],
 				},
 				checkbox1: {
 					style: { alignment: ['left', 'center'], value: true },
-					param: ['PNG_Checkbox', undefined, 'PNG']
+					param: ['PNG_Checkbox', undefined, 'PNG'],
 				},
 				checkbox2: {
 					style: { alignment: ['left', 'center'], value: false },
-					param: ['TGA_Checkbox', undefined, 'TGA']
-				}
-			}
+					param: ['TGA_Checkbox', undefined, 'TGA'],
+				},
+			},
 		},
 		button: {
 			style: { alignment: ['fill', 'top'], onClick: render },
-			param: ['Rrender', [0, 0, 22, globalHeight], 'Render']
-		}
-	}
+			param: ['Rrender', [0, 0, 22, globalHeight], 'Render'],
+		},
+	},
 };
 
 let activeItem = _.getActiveItem();
@@ -180,27 +201,27 @@ let rootFolder = app.project.rootFolder;
 let renderQueueItems = app.project.renderQueue.items;
 
 let elements = _.tree.parse(UISource);
-let textureWidth_dropDownList = (elements.getElementById(
+let textureWidth_dropDownList = elements.getElementById(
 	'textureWidth_dropDownList'
-) as unknown) as DropDownList;
-let textureHeight_dropDownList = (elements.getElementById(
+) as unknown as DropDownList;
+let textureHeight_dropDownList = elements.getElementById(
 	'textureHeight_dropDownList'
-) as unknown) as DropDownList;
-let textureName_dropDownList = (elements.getElementById(
+) as unknown as DropDownList;
+let textureName_dropDownList = elements.getElementById(
 	'textureName_dropDownList'
-) as unknown) as DropDownList;
-let PNG_Checkbox = (elements.getElementById(
+) as unknown as DropDownList;
+let PNG_Checkbox = elements.getElementById(
 	'PNG_Checkbox'
-) as unknown) as Checkbox;
-let TGA_Checkbox = (elements.getElementById(
+) as unknown as Checkbox;
+let TGA_Checkbox = elements.getElementById(
 	'TGA_Checkbox'
-) as unknown) as Checkbox;
-let digits_Statictext = (elements.getElementById(
+) as unknown as Checkbox;
+let digits_Statictext = elements.getElementById(
 	'digits_Statictext'
-) as unknown) as StaticText;
-let digits_Scrollbar = (elements.getElementById(
+) as unknown as StaticText;
+let digits_Scrollbar = elements.getElementById(
 	'digits_Scrollbar'
-) as unknown) as Scrollbar;
+) as unknown as Scrollbar;
 
 digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;
 
@@ -211,7 +232,7 @@ function refreshDigitsText() {
 
 function existCategoryFolder(folder: FolderItem, inputName: string) {
 	let result = { exist: false, folder: folder };
-	_.eachItems(folder, function(file) {
+	_.eachItems(folder, file => {
 		if (file.name === inputName) {
 			result.exist = true;
 			result.folder = file as FolderItem;
@@ -228,7 +249,8 @@ function getCategoryFolder(parentFolderName: string) {
 }
 
 function refreshTextureSize() {
-	textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 4;
+	textureWidth_dropDownList.selection =
+		textureHeight_dropDownList.selection = 4;
 }
 
 function refreshScrollbar() {
@@ -247,16 +269,22 @@ function dataLeftCompleting(
 }
 
 function createComp() {
-	let compNameIndex = (textureName_dropDownList.selection as ListItem).index;
-	let compName = textureNameArray[compNameIndex];
+	let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
+		.index;
+	let categoryFolderName = textureNameArray[categoryFolderIndex];
 	let compWidth =
-		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
+		textureSizeArray[
+			(textureWidth_dropDownList.selection as ListItem).index
+		];
 	let compHeight =
-		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
-	let parentFolderName = dataLeftCompleting(compNameIndex, 2) + ' ' + compName;
+		textureSizeArray[
+			(textureHeight_dropDownList.selection as ListItem).index
+		];
+	let parentFolderName =
+		dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
 	let parentFolder = getCategoryFolder(parentFolderName);
 	let finalCompName = getFinalCompName(
-		compName,
+		categoryFolderName,
 		compWidth,
 		compHeight,
 		parentFolder
@@ -273,19 +301,55 @@ function createComp() {
 	targetComp.openInViewer();
 }
 
-function apply() {
+function duplicateComp() {
 	activeItem = _.getActiveItem();
-	let compNameIndex = (textureName_dropDownList.selection as ListItem).index;
-	let compName = textureNameArray[compNameIndex];
+	let nameArray = (activeItem as CompItem).name.split('_');
+	let compName = nameArray[1];
+	let compSize = nameArray[nameArray.length - 2];
+	let compWidth = _.toNumber(compSize.split('x')[0]);
+	let compHeight = _.toNumber(compSize.split('x')[1]);
+	let originComp = activeItem as CompItem;
+	let parentFolder = originComp.parentFolder;
+	let finalCompName = getFinalCompName(
+		compName,
+		compWidth,
+		compHeight,
+		parentFolder
+	);
+	let targetComp = items.addComp(
+		finalCompName,
+		compWidth,
+		compHeight,
+		1,
+		1 / 30,
+		30
+	);
+	(targetComp as CompItem).parentFolder = parentFolder;
+	_.eachLayersRight(originComp, layer => {
+		layer.copyToComp(targetComp);
+	});
+	targetComp.openInViewer();
+}
+
+function changeComp() {
+	activeItem = _.getActiveItem();
+	let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
+		.index;
+	let categoryFolderName = textureNameArray[categoryFolderIndex];
 	let compWidth =
-		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
+		textureSizeArray[
+			(textureWidth_dropDownList.selection as ListItem).index
+		];
 	let compHeight =
-		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
-	let parentFolderName = dataLeftCompleting(compNameIndex, 2) + ' ' + compName;
+		textureSizeArray[
+			(textureHeight_dropDownList.selection as ListItem).index
+		];
+	let parentFolderName =
+		dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
 	let targetComp = activeItem as CompItem;
 	let parentFolder = getCategoryFolder(parentFolderName);
 	let finalCompName = getFinalCompName(
-		compName,
+		categoryFolderName,
 		compWidth,
 		compHeight,
 		parentFolder
@@ -299,6 +363,7 @@ function apply() {
 }
 
 function render() {
+	permissionDialog();
 	protectiveSave();
 	activeItem = _.getActiveItem();
 	if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value))
@@ -313,6 +378,7 @@ function render() {
 		let targetOutputModule = targetRenderQueueItem.outputModule(
 			numOutputModules++
 		);
+		targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
 		pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
 	}
 	if (TGA_Checkbox.value) {
@@ -320,11 +386,14 @@ function render() {
 		let targetOutputModule = targetRenderQueueItem.outputModule(
 			numOutputModules++
 		);
+		targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
 		tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
 	}
 	startRender();
-	if (pngFile) fixRenderFile(File(pngFile.fsName + '.png00000'));
-	if (tgaFile) fixRenderFile(File(tgaFile.fsName + '.tga00000'));
+	if (pngFile)
+		fixRenderFile(File(pngFile.fsName + '.png00000'), '.png00000', '.png');
+	if (tgaFile)
+		fixRenderFile(File(tgaFile.fsName + '.tga00000'), '.tga00000', '.tga');
 }
 
 function getTargetCompName(
@@ -343,7 +412,7 @@ function getFinalCompName(
 	parentFolder: FolderItem
 ) {
 	let compIndex = 0;
-	_.eachItems(parentFolder, function(compItem) {
+	_.eachItems(parentFolder, compItem => {
 		let nameArray = compItem.name.split('_');
 		let compItemSize = nameArray[nameArray.length - 2];
 		let compItemWidth = compItemSize.split('x')[0];
@@ -360,7 +429,10 @@ function getFinalCompName(
 		compName,
 		compWidth,
 		compHeight,
-		dataLeftCompleting(compIndex, _.toNumber(digits_Scrollbar.value.toFixed(0)))
+		dataLeftCompleting(
+			compIndex,
+			_.toNumber(digits_Scrollbar.value.toFixed(0))
+		)
 	);
 }
 
@@ -371,17 +443,26 @@ function applyTargetTemplate(
 	activeItem = _.getActiveItem();
 	let templatesArray = targetOutputModule.templates;
 	let existTemplate = false;
-	_.forEach(templatesArray, function(value) {
+	_.forEach(templatesArray, function (value) {
 		if (value === targetTemplateName) existTemplate = true;
 	});
 	if (existTemplate) targetOutputModule.applyTemplate(targetTemplateName);
+	if (!existTemplate) {
+		alert(`Please create ${targetTemplateName} output module first.`);
+		app.executeCommand(_CommandID.OutputModule);
+	}
 	let outputFolderPath =
 		(app.project.file as File).path +
 		'//' +
 		(activeItem as CompItem).parentFolder.name;
-	let outputFile = File(
-		getFolder(outputFolderPath).fsName + '//' + (activeItem as CompItem).name
+	let outputFile = new File(
+		getFolder(outputFolderPath).fsName +
+			'//' +
+			(activeItem as CompItem).name
 	);
+
+	targetOutputModule.includeSourceXMP = false;
+	targetOutputModule.postRenderAction = PostRenderAction.NONE;
 	return (targetOutputModule.file = outputFile);
 }
 
@@ -392,9 +473,7 @@ function protectiveSave() {
 
 function getFolder(folderPath: string) {
 	var folder = new Folder(folderPath);
-	if (!folder.exists) {
-		folder.create();
-	}
+	if (!folder.exists) folder.create();
 	return folder;
 }
 
@@ -402,10 +481,44 @@ function startRender() {
 	app.project.renderQueue.render();
 }
 
-function fixRenderFile(renderFile: File) {
+function fixRenderFile(
+	renderFile: File,
+	wrongString: string,
+	rightString: string
+) {
 	if (!renderFile.exists) return;
 	let oldName = renderFile.displayName;
-	let newName =
-		oldName.split('.')[0] + '.' + oldName.split('.')[1].substring(0, 3);
-	renderFile.rename(newName);
+	if (oldName.search(wrongString as any))
+		renderFile.rename(oldName.replace(wrongString, rightString));
+}
+
+function isSecurityPrefSet() {
+	try {
+		var securitySetting = app.preferences.getPrefAsLong(
+			'Main Pref Section',
+			'Pref_SCRIPTING_FILE_NETWORK_SECURITY'
+		);
+		return securitySetting == 1;
+	} catch (e) {
+		return true;
+	}
+}
+
+function permissionDialog() {
+	if (!isSecurityPrefSet()) {
+		alert(
+			'This script requires access to write files.\n Go to the  General  panel of the application preferences and make sure 「Allow Scripts to Write Files and Access Network」 is checked.'
+		);
+		protectiveTry(() => {
+			app.executeCommand(_CommandID.ScriptsExpressions);
+		});
+	}
+}
+
+function protectiveTry(callback: Function) {
+	try {
+		callback();
+	} catch (e) {
+		alert(e);
+	}
 }

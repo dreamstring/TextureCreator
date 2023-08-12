@@ -5,7 +5,7 @@ export default {
     input: "src/index.tsx",
     output: [
         {
-            file: "dist/soil.jsx",
+            file: "dist/main.jsx",
             intro: "(function () {",
             outro: "}).call(this);",
             plugins: [
