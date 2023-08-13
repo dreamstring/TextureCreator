@@ -1,4 +1,4 @@
-// 2023/8/13 11:14:10
+// 2023/8/13 16:26:04
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -867,6 +867,13 @@
         }
         return collection;
     }
+    function eachLayers(compItem, iteratee) {
+        collectionEach(compItem.layers, function(value, index) {
+            if (iteratee(value, index, compItem) === false) {
+                return false;
+            }
+        });
+    }
     function eachLayersRight(compItem, iteratee) {
         collectionEachRight(compItem.layers, function(value, index) {
             if (iteratee(value, index, compItem) === false) {
@@ -1011,13 +1018,14 @@
                 param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
             }
         },
-        group3: {
+        panel3: {
             param: [ "method_group" ],
             margins: 0,
             spacing: 0,
             style: {
                 orientation: "row",
-                alignment: [ "fill", "top" ]
+                alignment: [ "fill", "top" ],
+                text: "Method"
             },
             button1: {
                 style: {
@@ -1041,7 +1049,38 @@
                 param: [ "Apply", [ 0, 0, 22, globalHeight ], "Apply" ]
             }
         },
-        group4: {
+        panel4: {
+            param: [ "bg_group" ],
+            margins: 0,
+            spacing: 0,
+            style: {
+                orientation: "row",
+                alignment: [ "fill", "top" ],
+                text: "BackGround"
+            },
+            button1: {
+                style: {
+                    alignment: [ "fill", "fill" ],
+                    onClick: createBlackBg
+                },
+                param: [ "BlackBg", [ 0, 0, 22, globalHeight ], "BlackBg" ]
+            },
+            button2: {
+                style: {
+                    alignment: [ "fill", "fill" ],
+                    onClick: createWhiteBg
+                },
+                param: [ "WhiteBg", [ 0, 0, 22, globalHeight ], "WhiteBg" ]
+            },
+            button3: {
+                style: {
+                    alignment: [ "fill", "fill" ],
+                    onClick: createNoBg
+                },
+                param: [ "NoBg", [ 0, 0, 22, globalHeight ], "NoBg" ]
+            }
+        },
+        group5: {
             param: [ "render_group", [ 0, 0, 50, 22 ] ],
             margins: 0,
             spacing: 0,
@@ -1144,6 +1183,9 @@
     }
     function duplicateComp() {
         activeItem = getActiveItem();
+        if (!activeItem) {
+            return;
+        }
         var nameArray = activeItem.name.split("_");
         var compName = nameArray[1];
         var compSize = nameArray[nameArray.length - 2];
@@ -1161,6 +1203,9 @@
     }
     function changeComp() {
         activeItem = getActiveItem();
+        if (!activeItem) {
+            return;
+        }
         var categoryFolderIndex = textureName_dropDownList.selection.index;
         var categoryFolderName = textureNameArray[categoryFolderIndex];
         var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
@@ -1174,11 +1219,95 @@
         targetComp.name = finalCompName;
         targetComp.parentFolder = parentFolder;
         targetComp.openInViewer();
+        var existBg = false;
+        var bgComment = "TextureBackGround";
+        var bgColor = [ 1, 1, 1 ];
+        var bgColorName = "None";
+        eachLayers(targetComp, function(layer) {
+            if (layer.comment == bgComment) {
+                existBg = true;
+                layer.locked = false;
+                bgColorName = layer.name.split(" ")[1];
+                layer.remove();
+            }
+        });
+        if (!existBg) {
+            return;
+        }
+        if (bgColorName == "Black") {
+            bgColor = [ 0, 0, 0 ];
+        }
+        if (bgColorName == "White") {
+            bgColor = [ 1, 1, 1 ];
+        }
+        createTargetColorBg(bgColor, bgColorName);
+    }
+    function createBg(targetComp, compWidth, compHeight, color, name) {
+        return targetComp.layers.addSolid(color, name, toNumber(compWidth), toNumber(compHeight), 1);
+    }
+    function createBlackBg() {
+        createTargetColorBg([ 0, 0, 0 ], "Black");
+    }
+    function createWhiteBg() {
+        createTargetColorBg([ 1, 1, 1 ], "White");
+    }
+    function createNoBg() {
+        createTargetColorBg([ 1, 1, 1 ], "None");
+    }
+    function createTargetColorBg(targetColor, targetColorName) {
+        activeItem = getActiveItem();
+        var compWidth = activeItem.width;
+        var compHeight = activeItem.height;
+        var existBgSource = false;
+        var bgName = "".concat(compWidth, "x").concat(compHeight, " ").concat(targetColorName);
+        var bgComment = "TextureBackGround";
+        var solidsFolder = getSolidsFolder();
+        eachLayers(activeItem, function(layer) {
+            if (layer.comment === bgComment) {
+                layer.locked = false;
+                layer.remove();
+            }
+        });
+        if (targetColorName === "None") {
+            return;
+        }
+        var solidsSource;
+        if (solidsFolder) {
+            eachItems(solidsFolder, function(solidItem) {
+                if (solidItem.name === bgName && solidItem.comment === bgComment) {
+                    existBgSource = true;
+                    solidsSource = solidItem;
+                }
+            });
+        }
+        var bgLayer;
+        if (!existBgSource) {
+            bgLayer = createBg(activeItem, compWidth, compHeight, targetColor, bgName);
+            bgLayer.source.comment = bgComment;
+        }
+        if (existBgSource) {
+            bgLayer = activeItem.layers.add(solidsSource);
+        }
+        bgLayer.comment = bgComment;
+        bgLayer.moveToEnd();
+        bgLayer.locked = true;
+    }
+    function getSolidsFolder() {
+        var solidsFolder;
+        eachItems(rootFolder, function(folderItem) {
+            if (folderItem.name === "Solids") {
+                solidsFolder = folderItem;
+            }
+        });
+        return solidsFolder;
     }
     function render() {
         permissionDialog();
         protectiveSave();
         activeItem = getActiveItem();
+        if (!activeItem) {
+            return;
+        }
         if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value)) {
             renderQueueItems.add(activeItem);
         }

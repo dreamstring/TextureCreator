@@ -1,4 +1,5 @@
 import * as _ from 'soil-ts';
+import isEqual from '../node_modules/soil-ts/lodash/#eqDeep';
 
 const textureSizeArray: number[] = [
 	16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
@@ -146,13 +147,14 @@ let UISource = {
 			param: [undefined, [0, 0, 22, globalHeight], '↺'],
 		},
 	},
-	group3: {
+	panel3: {
 		param: ['method_group'],
 		margins: 0,
 		spacing: 0,
 		style: {
 			orientation: 'row',
 			alignment: ['fill', 'top'],
+			text: 'Method',
 		},
 		button1: {
 			style: { alignment: ['fill', 'fill'], onClick: createComp },
@@ -167,7 +169,29 @@ let UISource = {
 			param: ['Apply', [0, 0, 22, globalHeight], 'Apply'],
 		},
 	},
-	group4: {
+	panel4: {
+		param: ['bg_group'],
+		margins: 0,
+		spacing: 0,
+		style: {
+			orientation: 'row',
+			alignment: ['fill', 'top'],
+			text: 'BackGround',
+		},
+		button1: {
+			style: { alignment: ['fill', 'fill'], onClick: createBlackBg },
+			param: ['BlackBg', [0, 0, 22, globalHeight], 'BlackBg'],
+		},
+		button2: {
+			style: { alignment: ['fill', 'fill'], onClick: createWhiteBg },
+			param: ['WhiteBg', [0, 0, 22, globalHeight], 'WhiteBg'],
+		},
+		button3: {
+			style: { alignment: ['fill', 'fill'], onClick: createNoBg },
+			param: ['NoBg', [0, 0, 22, globalHeight], 'NoBg'],
+		},
+	},
+	group5: {
 		param: ['render_group', [0, 0, 50, 22]],
 		margins: 0,
 		spacing: 0,
@@ -311,6 +335,7 @@ function createComp() {
 
 function duplicateComp() {
 	activeItem = _.getActiveItem();
+	if (!activeItem) return;
 	let nameArray = (activeItem as CompItem).name.split('_');
 	let compName = nameArray[1];
 	let compSize = nameArray[nameArray.length - 2];
@@ -341,6 +366,7 @@ function duplicateComp() {
 
 function changeComp() {
 	activeItem = _.getActiveItem();
+	if (!activeItem) return;
 	let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
 		.index;
 	let categoryFolderName = textureNameArray[categoryFolderIndex];
@@ -368,12 +394,117 @@ function changeComp() {
 	targetComp.name = finalCompName;
 	targetComp.parentFolder = parentFolder;
 	targetComp.openInViewer();
+
+	let existBg = false;
+	let bgComment = 'TextureBackGround';
+	let bgColor: ThreeDColorValue = [1, 1, 1];
+	let bgColorName = 'None';
+
+	_.eachLayers(targetComp, layer => {
+		if (layer.comment == bgComment) {
+			existBg = true;
+			layer.locked = false;
+			bgColorName = layer.name.split(' ')[1];
+			layer.remove();
+		}
+	});
+
+	if (!existBg) return;
+	if (bgColorName == 'Black') bgColor = [0, 0, 0];
+	if (bgColorName == 'White') bgColor = [1, 1, 1];
+	createTargetColorBg(bgColor, bgColorName);
+}
+
+function createBg(
+	targetComp: CompItem,
+	compWidth: string | number,
+	compHeight: string | number,
+	color: ThreeDColorValue,
+	name: string
+) {
+	return targetComp.layers.addSolid(
+		color,
+		name,
+		_.toNumber(compWidth),
+		_.toNumber(compHeight),
+		1
+	);
+}
+
+function createBlackBg() {
+	createTargetColorBg([0, 0, 0], 'Black');
+}
+
+function createWhiteBg() {
+	createTargetColorBg([1, 1, 1], 'White');
+}
+
+function createNoBg() {
+	createTargetColorBg([1, 1, 1], 'None');
+}
+
+function createTargetColorBg(
+	targetColor: ThreeDColorValue,
+	targetColorName: string
+) {
+	activeItem = _.getActiveItem();
+	let compWidth = (activeItem as CompItem).width;
+	let compHeight = (activeItem as CompItem).height;
+	let existBgSource = false;
+
+	let bgName = `${compWidth}x${compHeight} ${targetColorName}`;
+	let bgComment = 'TextureBackGround';
+	let solidsFolder = getSolidsFolder();
+
+	_.eachLayers(activeItem as CompItem, layer => {
+		if (layer.comment === bgComment) {
+			layer.locked = false;
+			layer.remove();
+		}
+	});
+	if (targetColorName === 'None') return;
+
+	let solidsSource: Item;
+	if (solidsFolder)
+		_.eachItems(solidsFolder, solidItem => {
+			if (solidItem.name === bgName && solidItem.comment === bgComment) {
+				existBgSource = true;
+				solidsSource = solidItem;
+			}
+		});
+
+	let bgLayer: Layer;
+	if (!existBgSource) {
+		bgLayer = createBg(
+			activeItem as CompItem,
+			compWidth,
+			compHeight,
+			targetColor,
+			bgName
+		);
+		(bgLayer! as AVLayer).source.comment = bgComment;
+	}
+	if (existBgSource)
+		bgLayer = (activeItem as CompItem).layers.add(solidsSource! as AVItem);
+	bgLayer!.comment = bgComment;
+	bgLayer!.moveToEnd();
+	bgLayer!.locked = true;
+}
+
+function getSolidsFolder() {
+	let solidsFolder: FolderItem | null;
+	_.eachItems(rootFolder, folderItem => {
+		if (folderItem.name === 'Solids')
+			solidsFolder = folderItem as FolderItem;
+	});
+	return solidsFolder!;
 }
 
 function render() {
 	permissionDialog();
 	protectiveSave();
 	activeItem = _.getActiveItem();
+	if (!activeItem) return;
 	if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value))
 		renderQueueItems.add(activeItem as CompItem);
 	let targetRenderQueueItem = renderQueueItems[renderQueueItems.length];
