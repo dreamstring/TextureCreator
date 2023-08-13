@@ -1,4 +1,4 @@
-// 2023/8/13 03:09:37
+// 2023/8/13 11:14:10
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -879,6 +879,9 @@
     }
     var textureSizeArray = [ 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
     var textureNameArray = [ "Glow", "Light", "Mask", "Noise", "Trail", "Turbulence" ];
+    var textureName = function(compName, compWidth, compHeight, index) {
+        return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
+    };
     var globalHeight = 22;
     var UISource = {
         style: {
@@ -1206,7 +1209,7 @@
         }
     }
     function getTargetCompName(compName, compWidth, compHeight, index) {
-        return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
+        return textureName(compName, compWidth, compHeight, index);
     }
     function getFinalCompName(compName, compWidth, compHeight, parentFolder) {
         var compIndex = 0;

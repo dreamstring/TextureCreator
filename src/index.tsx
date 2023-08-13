@@ -11,6 +11,14 @@ const textureNameArray: string[] = [
 	'Trail',
 	'Turbulence',
 ];
+let textureName = (
+	compName: string,
+	compWidth: string | number,
+	compHeight: string | number,
+	index: string | number
+) => {
+	return `T_${compName}_${compWidth}x${compHeight}_${index}`;
+};
 
 const globalHeight = 22;
 
@@ -402,7 +410,7 @@ function getTargetCompName(
 	compHeight: string | number,
 	index: string | number
 ) {
-	return `T_${compName}_${compWidth}x${compHeight}_${index}`;
+	return textureName(compName, compWidth, compHeight, index);
 }
 
 function getFinalCompName(
