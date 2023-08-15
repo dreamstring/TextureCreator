@@ -1,4 +1,4 @@
-// 2023/8/14 10:22:43
+// 2023/8/15 23:27:20
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -851,6 +851,31 @@
         }
         return collection;
     }
+    var isFile = createIsNativeType(File);
+    function newFolder(path) {
+        return new Folder(path);
+    }
+    var isFolder = createIsNativeType(Folder);
+    function castFolder(folder) {
+        return isFolder(folder) ? folder : newFolder(folder);
+    }
+    function getFiles(path, mask) {
+        var folder = castFolder(path);
+        if (!folder.exists) {
+            return [];
+        }
+        return folder.getFiles(mask);
+    }
+    function eachFiles(folder, iteratee) {
+        var resIndex = 0;
+        forEach(getFiles(folder), function(unknownFile, index, files) {
+            if (isFile(unknownFile)) {
+                if (iteratee(unknownFile, resIndex++, files) === false) {
+                    return false;
+                }
+            }
+        });
+    }
     function eachItems(itemCollection, iteratee) {
         collectionEach(itemCollection.items, function(value, index) {
             if (iteratee(value, index, itemCollection) === false) {
@@ -884,6 +909,8 @@
     function getActiveItem() {
         return app.project.activeItem;
     }
+    var isAVLayer = createIsNativeType(AVLayer);
+    var isFolderItem = createIsNativeType(FolderItem);
     var textureSizeArray = [ 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
     var textureNameArray = [ "Glow", "Light", "Mask", "Noise", "Trail", "Turbulence" ];
     var textureName = function(compName, compWidth, compHeight, index) {
@@ -1146,7 +1173,7 @@
             folder: folder
         };
         eachItems(folder, function(file) {
-            if (file.name === inputName) {
+            if (file.name === inputName && isFolderItem(file)) {
                 result.exist = true;
                 result.folder = file;
             }
@@ -1256,6 +1283,9 @@
     }
     function createTargetColorBg(targetColor, targetColorName) {
         activeItem = getActiveItem();
+        if (!activeItem) {
+            return;
+        }
         var compWidth = activeItem.width;
         var compHeight = activeItem.height;
         var existBgSource = false;
@@ -1283,7 +1313,9 @@
         var bgLayer;
         if (!existBgSource) {
             bgLayer = createBg(activeItem, compWidth, compHeight, targetColor, bgName);
-            bgLayer.source.comment = bgComment;
+            if (isAVLayer(bgLayer)) {
+                bgLayer.source.comment = bgComment;
+            }
         }
         if (existBgSource) {
             bgLayer = activeItem.layers.add(solidsSource);
@@ -1295,7 +1327,7 @@
     function getSolidsFolder() {
         var solidsFolder;
         eachItems(rootFolder, function(folderItem) {
-            if (folderItem.name === "Solids") {
+            if (folderItem.name === "Solids" && isFolderItem(folderItem)) {
                 solidsFolder = folderItem;
             }
         });
@@ -1313,28 +1345,34 @@
         }
         var targetRenderQueueItem = renderQueueItems[renderQueueItems.length];
         var numOutputModules = targetRenderQueueItem.numOutputModules;
-        var pngFile, tgaFile;
+        var pngFile, tgaFile, renderFolder;
         if (PNG_Checkbox.value && TGA_Checkbox.value) {
             targetRenderQueueItem.outputModules.add();
         }
         if (PNG_Checkbox.value) {
             var targetTemplateName = "PNG";
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
             pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            renderFolder = pngFile.parent;
         }
         if (TGA_Checkbox.value) {
             var targetTemplateName = "TGA";
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
             tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            renderFolder = tgaFile.parent;
         }
         startRender();
-        if (pngFile) {
-            fixRenderFile(File(pngFile.fsName + ".png00000"), ".png00000", ".png");
-        }
-        if (tgaFile) {
-            fixRenderFile(File(tgaFile.fsName + ".tga00000"), ".tga00000", ".tga");
+        if (renderFolder.exists) {
+            eachFiles(renderFolder, function(file) {
+                var regex = /\.(png|tga)\d{5}/g;
+                if (file.displayName.match(regex)) {
+                    fixRenderFile(file);
+                }
+            });
         }
     }
     function getTargetCompName(compName, compWidth, compHeight, index) {
@@ -1356,6 +1394,9 @@
     }
     function applyTargetTemplate(targetOutputModule, targetTemplateName) {
         activeItem = getActiveItem();
+        if (!activeItem) {
+            return;
+        }
         var templatesArray = targetOutputModule.templates;
         var existTemplate = false;
         forEach(templatesArray, function(value) {
@@ -1368,13 +1409,39 @@
         }
         if (!existTemplate) {
             alert("Please create ".concat(targetTemplateName, " output module first."));
-            app.executeCommand(2150);
+            protectiveTry(function() {
+                app.executeCommand(2150);
+            });
         }
         var outputFolderPath = app.project.file.path + "//" + activeItem.parentFolder.name;
         var outputFile = new File(getFolder(outputFolderPath).fsName + "//" + activeItem.name);
         targetOutputModule.includeSourceXMP = false;
         targetOutputModule.postRenderAction = PostRenderAction.NONE;
         return targetOutputModule.file = outputFile;
+    }
+    function applyRenderSetting(renderQueueItem) {
+        activeItem = getActiveItem();
+        if (!activeItem) {
+            return;
+        }
+        var timeSpanStart = activeItem.time;
+        var timeSpanDuration = activeItem.frameDuration;
+        var renderSettings = {
+            "Color Depth": "Current Settings",
+            "Disk Cache": "Read Only",
+            Effects: "All On",
+            "Frame Blending": "On for Checked Layers",
+            "Frame Rate": "Use comp's frame rate",
+            "Motion Blur": "On for Checked Layers",
+            "Proxy Use": "Use No Proxies",
+            Quality: "Best",
+            Resolution: "Full",
+            "Solo Switches": "Current Settings",
+            "Time Span Start": timeSpanStart,
+            "Time Span Duration": timeSpanDuration,
+            "Time Span End": timeSpanStart + timeSpanDuration
+        };
+        renderQueueItem.setSettings(renderSettings);
     }
     function protectiveSave() {
         if (app.project.file === null) {
@@ -1394,20 +1461,23 @@
     function startRender() {
         app.project.renderQueue.render();
     }
-    function fixRenderFile(renderFile, wrongString, rightString) {
+    function fixRenderFile(renderFile) {
         if (!renderFile.exists) {
             return;
         }
         var oldName = renderFile.displayName;
-        if (oldName.search(wrongString)) {
-            renderFile.rename(oldName.replace(wrongString, rightString));
-        }
+        var regex = /\.(png|tga)\d{5}/g;
+        var newName = oldName.replace(regex, function(match) {
+            var extensionMatch = match.match(/\.(png|tga)/);
+            return extensionMatch ? extensionMatch[0] : match;
+        });
+        renderFile.rename(newName);
     }
     function isSecurityPrefSet() {
         try {
             var securitySetting = app.preferences.getPrefAsLong("Main Pref Section", "Pref_SCRIPTING_FILE_NETWORK_SECURITY");
             return securitySetting == 1;
-        } catch (e) {
+        } catch (error) {
             return true;
         }
     }
@@ -1422,8 +1492,8 @@
     function protectiveTry(callback) {
         try {
             callback();
-        } catch (e) {
-            alert(e);
+        } catch (error) {
+            alert(error);
         }
     }
 }).call(this);
