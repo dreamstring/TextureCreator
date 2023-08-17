@@ -1,7 +1,7 @@
 import * as _ from 'soil-ts';
 
 const textureSizeArray: number[] = [
-	4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
+	4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096
 ];
 const textureNameArray: string[] = [
 	'Glow',
@@ -9,7 +9,7 @@ const textureNameArray: string[] = [
 	'Mask',
 	'Noise',
 	'Trail',
-	'Turbulence',
+	'Turbulence'
 ];
 const textureName = (
 	compName: string,
@@ -27,7 +27,7 @@ let UISource = {
 		margins: 5,
 		spacing: 5,
 		orientation: 'column',
-		alignment: ['fill', 'fill'],
+		alignment: ['fill', 'fill']
 	},
 	group1: {
 		param: ['textureSize_group'],
@@ -35,23 +35,23 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top'],
+			alignment: ['fill', 'top']
 		},
 		statictext: {
 			style: { alignment: ['left', 'center'] },
-			param: [undefined, [0, 0, 26, globalHeight], 'Size: '],
+			param: [undefined, [0, 0, 26, globalHeight], 'Size: ']
 		},
 		group: {
 			style: {
 				orientation: 'stack',
-				alignment: ['fill', 'center'],
+				alignment: ['fill', 'center']
 			},
 			group1: {
 				style: {
 					margins: 0,
 					spacing: 20,
 					orientation: 'row',
-					alignment: ['fill', 'center'],
+					alignment: ['fill', 'center']
 				},
 				param: ['textureSize', [0, 0, 200, globalHeight]],
 				dropDownList1: {
@@ -59,36 +59,36 @@ let UISource = {
 					param: [
 						'textureWidth_dropDownList',
 						[0, 0, 50, globalHeight],
-						textureSizeArray,
-					],
+						textureSizeArray
+					]
 				},
 				dropDownList2: {
 					style: { alignment: ['fill', 'fill'], selection: 6 },
 					param: [
 						'textureHeight_dropDownList',
 						[0, 0, 50, globalHeight],
-						textureSizeArray,
-					],
-				},
+						textureSizeArray
+					]
+				}
 			},
 			group2: {
 				style: {
 					orientation: 'row',
-					alignment: ['center', 'center'],
+					alignment: ['center', 'center']
 				},
 				statictext1: {
 					style: { alignment: ['center', 'center'] },
-					param: [undefined, [0, 0, 12, globalHeight], ' x'],
-				},
-			},
+					param: [undefined, [0, 0, 12, globalHeight], ' x']
+				}
+			}
 		},
 		button: {
 			style: {
 				alignment: ['right', 'center'],
-				onClick: refreshTextureSize,
+				onClick: refreshTextureSize
 			},
-			param: [undefined, [0, 0, 22, globalHeight], '↺'],
-		},
+			param: [undefined, [0, 0, 22, globalHeight], '↺']
+		}
 	},
 	group2: {
 		param: ['textureName_group'],
@@ -96,55 +96,51 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top'],
+			alignment: ['fill', 'top']
 		},
 		group1: {
 			margins: 0,
 			spacing: 0,
 			style: {
 				orientation: 'row',
-				alignment: ['fill', 'top'],
+				alignment: ['fill', 'top']
 			},
 			statictext: {
 				style: { alignment: ['left', 'center'] },
-				param: [undefined, [0, 0, 36, globalHeight], 'Name: '],
+				param: [undefined, [0, 0, 36, globalHeight], 'Name: ']
 			},
 			dropDownList: {
 				style: { alignment: ['fill', 'fill'], selection: 0 },
 				param: [
 					'textureName_dropDownList',
 					[0, 0, 50, globalHeight],
-					textureNameArray,
-				],
-			},
+					textureNameArray
+				]
+			}
 		},
 		group2: {
 			margins: 0,
 			spacing: 0,
 			style: {
 				orientation: 'row',
-				alignment: ['fill', 'top'],
+				alignment: ['fill', 'top']
 			},
 			statictext: {
 				style: { alignment: ['left', 'center'] },
-				param: [
-					'digits_Statictext',
-					[0, 0, 46, globalHeight],
-					'Digits: 2',
-				],
+				param: ['digits_Statictext', [0, 0, 46, globalHeight], 'Digits: 2']
 			},
 			scrollbar: {
 				style: { alignment: ['fill', 'center'], selection: 0 },
-				param: ['digits_Scrollbar', [0, 0, 140, 10], 2, 0, 6],
-			},
+				param: ['digits_Scrollbar', [0, 0, 140, 10], 2, 0, 6]
+			}
 		},
 		button: {
 			style: {
 				alignment: ['right', 'center'],
-				onClick: refreshScrollbar,
+				onClick: refreshScrollbar
 			},
-			param: [undefined, [0, 0, 22, globalHeight], '↺'],
-		},
+			param: [undefined, [0, 0, 22, globalHeight], '↺']
+		}
 	},
 	panel3: {
 		param: ['method_group'],
@@ -153,20 +149,20 @@ let UISource = {
 		style: {
 			orientation: 'row',
 			alignment: ['fill', 'top'],
-			text: 'Method',
+			text: 'Method'
 		},
 		button1: {
 			style: { alignment: ['fill', 'fill'], onClick: createComp },
-			param: ['Create', [0, 0, 22, globalHeight], 'Create'],
+			param: ['Create', [0, 0, 22, globalHeight], 'Create']
 		},
 		button2: {
 			style: { alignment: ['fill', 'fill'], onClick: duplicateComp },
-			param: ['Duplicate', [0, 0, 22, globalHeight], 'Duplicate'],
+			param: ['Duplicate', [0, 0, 22, globalHeight], 'Duplicate']
 		},
 		button3: {
 			style: { alignment: ['fill', 'fill'], onClick: changeComp },
-			param: ['Apply', [0, 0, 22, globalHeight], 'Apply'],
-		},
+			param: ['Apply', [0, 0, 22, globalHeight], 'Apply']
+		}
 	},
 	panel4: {
 		param: ['bg_group'],
@@ -175,20 +171,24 @@ let UISource = {
 		style: {
 			orientation: 'row',
 			alignment: ['fill', 'top'],
-			text: 'BackGround',
+			text: 'BackGround'
 		},
 		button1: {
 			style: { alignment: ['fill', 'fill'], onClick: createBlackBg },
-			param: ['BlackBg', [0, 0, 22, globalHeight], 'BlackBg'],
+			param: ['BlackBg', [0, 0, 22, globalHeight], 'BlackBg']
 		},
 		button2: {
 			style: { alignment: ['fill', 'fill'], onClick: createWhiteBg },
-			param: ['WhiteBg', [0, 0, 22, globalHeight], 'WhiteBg'],
+			param: ['WhiteBg', [0, 0, 22, globalHeight], 'WhiteBg']
 		},
 		button3: {
-			style: { alignment: ['fill', 'fill'], onClick: createNoBg },
-			param: ['NoBg', [0, 0, 22, globalHeight], 'NoBg'],
+			style: { alignment: ['fill', 'fill'], onClick: createGreyBg },
+			param: ['GreyBg', [0, 0, 22, globalHeight], 'GreyBg']
 		},
+		button4: {
+			style: { alignment: ['fill', 'fill'], onClick: createNoBg },
+			param: ['NoBg', [0, 0, 22, globalHeight], 'NoBg']
+		}
 	},
 	group5: {
 		param: ['render_group', [0, 0, 50, 22]],
@@ -196,34 +196,34 @@ let UISource = {
 		spacing: 0,
 		style: {
 			orientation: 'row',
-			alignment: ['fill', 'top'],
+			alignment: ['fill', 'top']
 		},
 		group: {
 			param: ['render_group', [0, -6, 50, 22]],
 			style: {
 				orientation: 'stack',
-				alignment: ['left', 'top'],
+				alignment: ['left', 'top']
 			},
 			group: {
 				style: {
 					orientation: 'row',
-					alignment: ['left', 'center'],
+					alignment: ['left', 'center']
 				},
 				checkbox1: {
 					style: { alignment: ['left', 'center'], value: true },
-					param: ['PNG_Checkbox', undefined, 'PNG'],
+					param: ['PNG_Checkbox', undefined, 'PNG']
 				},
 				checkbox2: {
 					style: { alignment: ['left', 'center'], value: false },
-					param: ['TGA_Checkbox', undefined, 'TGA'],
-				},
-			},
+					param: ['TGA_Checkbox', undefined, 'TGA']
+				}
+			}
 		},
 		button: {
 			style: { alignment: ['fill', 'top'], onClick: render },
-			param: ['Rrender', [0, 0, 22, globalHeight], 'Render'],
-		},
-	},
+			param: ['Rrender', [0, 0, 22, globalHeight], 'Render']
+		}
+	}
 };
 
 let activeItem = _.getActiveItem();
@@ -304,13 +304,9 @@ function createComp() {
 		.index;
 	let categoryFolderName = textureNameArray[categoryFolderIndex];
 	let compWidth =
-		textureSizeArray[
-			(textureWidth_dropDownList.selection as ListItem).index
-		];
+		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
 	let compHeight =
-		textureSizeArray[
-			(textureHeight_dropDownList.selection as ListItem).index
-		];
+		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
 	let parentFolderName =
 		dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
 	let parentFolder = getCategoryFolder(parentFolderName);
@@ -370,13 +366,9 @@ function changeComp() {
 		.index;
 	let categoryFolderName = textureNameArray[categoryFolderIndex];
 	let compWidth =
-		textureSizeArray[
-			(textureWidth_dropDownList.selection as ListItem).index
-		];
+		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
 	let compHeight =
-		textureSizeArray[
-			(textureHeight_dropDownList.selection as ListItem).index
-		];
+		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
 	let parentFolderName =
 		dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
 	let targetComp = activeItem as CompItem;
@@ -436,6 +428,10 @@ function createBlackBg() {
 
 function createWhiteBg() {
 	createTargetColorBg([1, 1, 1], 'White');
+}
+
+function createGreyBg() {
+	createTargetColorBg([0.5, 0.5, 0.5], 'Grey');
 }
 
 function createNoBg() {
@@ -575,10 +571,7 @@ function getFinalCompName(
 		compName,
 		compWidth,
 		compHeight,
-		dataLeftCompleting(
-			compIndex,
-			_.toNumber(digits_Scrollbar.value.toFixed(0))
-		)
+		dataLeftCompleting(compIndex, _.toNumber(digits_Scrollbar.value.toFixed(0)))
 	);
 }
 
@@ -605,9 +598,7 @@ function applyTargetTemplate(
 		'//' +
 		(activeItem as CompItem).parentFolder.name;
 	let outputFile = new File(
-		getFolder(outputFolderPath).fsName +
-			'//' +
-			(activeItem as CompItem).name
+		getFolder(outputFolderPath).fsName + '//' + (activeItem as CompItem).name
 	);
 
 	targetOutputModule.includeSourceXMP = false;
@@ -633,7 +624,7 @@ function applyRenderSetting(renderQueueItem: RenderQueueItem) {
 		'Solo Switches': 'Current Settings',
 		'Time Span Start': timeSpanStart,
 		'Time Span Duration': timeSpanDuration,
-		'Time Span End': timeSpanStart + timeSpanDuration,
+		'Time Span End': timeSpanStart + timeSpanDuration
 	};
 	renderQueueItem.setSettings(renderSettings);
 }

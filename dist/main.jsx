@@ -1,4 +1,4 @@
-// 2023/8/16 21:56:34
+// 2023/8/17 17:11:21
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -911,7 +911,7 @@
     }
     var isAVLayer = createIsNativeType(AVLayer);
     var isFolderItem = createIsNativeType(FolderItem);
-    var textureSizeArray = [ 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
+    var textureSizeArray = [ 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
     var textureNameArray = [ "Glow", "Light", "Mask", "Noise", "Trail", "Turbulence" ];
     var textureName = function(compName, compWidth, compHeight, index) {
         return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
@@ -955,14 +955,14 @@
                     dropDownList1: {
                         style: {
                             alignment: [ "fill", "fill" ],
-                            selection: 4
+                            selection: 6
                         },
                         param: [ "textureWidth_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
                     },
                     dropDownList2: {
                         style: {
                             alignment: [ "fill", "fill" ],
-                            selection: 4
+                            selection: 6
                         },
                         param: [ "textureHeight_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
                     }
@@ -1103,6 +1103,13 @@
             button3: {
                 style: {
                     alignment: [ "fill", "fill" ],
+                    onClick: createGreyBg
+                },
+                param: [ "GreyBg", [ 0, 0, 22, globalHeight ], "GreyBg" ]
+            },
+            button4: {
+                style: {
+                    alignment: [ "fill", "fill" ],
                     onClick: createNoBg
                 },
                 param: [ "NoBg", [ 0, 0, 22, globalHeight ], "NoBg" ]
@@ -1186,7 +1193,7 @@
         return targetFolder.exist ? targetFolder.folder : items.addFolder(parentFolderName);
     }
     function refreshTextureSize() {
-        textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 4;
+        textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 6;
     }
     function refreshScrollbar() {
         digits_Scrollbar.value = 2;
@@ -1278,6 +1285,9 @@
     }
     function createWhiteBg() {
         createTargetColorBg([ 1, 1, 1 ], "White");
+    }
+    function createGreyBg() {
+        createTargetColorBg([ 0.5, 0.5, 0.5 ], "Grey");
     }
     function createNoBg() {
         createTargetColorBg([ 1, 1, 1 ], "None");
