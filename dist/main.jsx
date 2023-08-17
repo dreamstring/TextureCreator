@@ -1,4 +1,4 @@
-// 2023/8/15 23:27:20
+// 2023/8/16 21:56:34
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -916,6 +916,7 @@
     var textureName = function(compName, compWidth, compHeight, index) {
         return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
     };
+    var textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
     var globalHeight = 22;
     var UISource = {
         style: {
@@ -1381,6 +1382,9 @@
     function getFinalCompName(compName, compWidth, compHeight, parentFolder) {
         var compIndex = 0;
         eachItems(parentFolder, function(compItem) {
+            if (!textureRegex.test(compItem.name)) {
+                return;
+            }
             var nameArray = compItem.name.split("_");
             var compItemSize = nameArray[nameArray.length - 2];
             var compItemWidth = compItemSize.split("x")[0];

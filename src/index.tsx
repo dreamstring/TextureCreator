@@ -1,7 +1,7 @@
 import * as _ from 'soil-ts';
 
 const textureSizeArray: number[] = [
-	16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
+	4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
 ];
 const textureNameArray: string[] = [
 	'Glow',
@@ -11,7 +11,7 @@ const textureNameArray: string[] = [
 	'Trail',
 	'Turbulence',
 ];
-let textureName = (
+const textureName = (
 	compName: string,
 	compWidth: string | number,
 	compHeight: string | number,
@@ -19,7 +19,7 @@ let textureName = (
 ) => {
 	return `T_${compName}_${compWidth}x${compHeight}_${index}`;
 };
-
+const textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
 const globalHeight = 22;
 
 let UISource = {
@@ -55,7 +55,7 @@ let UISource = {
 				},
 				param: ['textureSize', [0, 0, 200, globalHeight]],
 				dropDownList1: {
-					style: { alignment: ['fill', 'fill'], selection: 4 },
+					style: { alignment: ['fill', 'fill'], selection: 6 },
 					param: [
 						'textureWidth_dropDownList',
 						[0, 0, 50, globalHeight],
@@ -63,7 +63,7 @@ let UISource = {
 					],
 				},
 				dropDownList2: {
-					style: { alignment: ['fill', 'fill'], selection: 4 },
+					style: { alignment: ['fill', 'fill'], selection: 6 },
 					param: [
 						'textureHeight_dropDownList',
 						[0, 0, 50, globalHeight],
@@ -281,7 +281,7 @@ function getCategoryFolder(parentFolderName: string) {
 
 function refreshTextureSize() {
 	textureWidth_dropDownList.selection =
-		textureHeight_dropDownList.selection = 4;
+		textureHeight_dropDownList.selection = 6;
 }
 
 function refreshScrollbar() {
@@ -558,6 +558,7 @@ function getFinalCompName(
 ) {
 	let compIndex = 0;
 	_.eachItems(parentFolder, compItem => {
+		if (!textureRegex.test(compItem.name)) return;
 		let nameArray = compItem.name.split('_');
 		let compItemSize = nameArray[nameArray.length - 2];
 		let compItemWidth = compItemSize.split('x')[0];
