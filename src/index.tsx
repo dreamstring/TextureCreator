@@ -6,10 +6,14 @@ const textureSizeArray: number[] = [
 const textureNameArray: string[] = [
 	'Glow',
 	'Light',
+	'Flare',
+	'Spark',
+	'Trail',
 	'Mask',
 	'Noise',
-	'Trail',
-	'Turbulence'
+	'Turbulence',
+	'Element',
+	'Sequence'
 ];
 const textureName = (
 	compName: string,
@@ -210,11 +214,11 @@ let UISource = {
 					alignment: ['left', 'center']
 				},
 				checkbox1: {
-					style: { alignment: ['left', 'center'], value: true },
+					style: { alignment: ['left', 'center'], value: false },
 					param: ['PNG_Checkbox', undefined, 'PNG']
 				},
 				checkbox2: {
-					style: { alignment: ['left', 'center'], value: false },
+					style: { alignment: ['left', 'center'], value: true },
 					param: ['TGA_Checkbox', undefined, 'TGA']
 				}
 			}

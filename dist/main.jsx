@@ -1,4 +1,4 @@
-// 2023/8/17 17:11:21
+// 2023/8/17 19:09:18
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -912,7 +912,7 @@
     var isAVLayer = createIsNativeType(AVLayer);
     var isFolderItem = createIsNativeType(FolderItem);
     var textureSizeArray = [ 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
-    var textureNameArray = [ "Glow", "Light", "Mask", "Noise", "Trail", "Turbulence" ];
+    var textureNameArray = [ "Glow", "Light", "Flare", "Spark", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence" ];
     var textureName = function(compName, compWidth, compHeight, index) {
         return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
     };
@@ -1137,14 +1137,14 @@
                     checkbox1: {
                         style: {
                             alignment: [ "left", "center" ],
-                            value: true
+                            value: false
                         },
                         param: [ "PNG_Checkbox", undefined, "PNG" ]
                     },
                     checkbox2: {
                         style: {
                             alignment: [ "left", "center" ],
-                            value: false
+                            value: true
                         },
                         param: [ "TGA_Checkbox", undefined, "TGA" ]
                     }
