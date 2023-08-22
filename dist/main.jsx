@@ -1,4 +1,4 @@
-// 2023/8/22 10:00:45
+// 2023/8/22 11:25:54
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -937,7 +937,7 @@
                 orientation: "stack",
                 alignment: [ "fill", "top" ],
                 bounds: [ 0, 0, 50, 114 ],
-                text: "Method"
+                text: "Texture Parameters"
             },
             group1: {
                 param: [ "textureSize_group" ],
@@ -1139,7 +1139,7 @@
                 }
             }
         },
-        panel3: {
+        panel2: {
             param: [ "method_group" ],
             margins: 0,
             spacing: 0,
@@ -1170,7 +1170,7 @@
                 param: [ "Apply", [ 0, 0, 22, globalHeight ], "Apply" ]
             }
         },
-        panel4: {
+        panel3: {
             param: [ "bg_group" ],
             margins: 0,
             spacing: 0,
@@ -1208,47 +1208,70 @@
                 param: [ "NoBg", [ 0, 0, 22, globalHeight ], "NoBg" ]
             }
         },
-        group5: {
-            param: [ "render_group", [ 0, 0, 50, 22 ] ],
+        panel4: {
             margins: 0,
             spacing: 0,
             style: {
-                orientation: "row",
-                alignment: [ "fill", "top" ]
+                orientation: "stack",
+                alignment: [ "fill", "top" ],
+                text: "Render"
             },
-            group: {
-                param: [ "render_group", [ 0, -6, 50, 22 ] ],
+            group5: {
+                param: [ "render_group", [ 0, 0, 50, 22 ] ],
+                margins: 0,
+                spacing: 0,
                 style: {
-                    orientation: "stack",
-                    alignment: [ "left", "top" ]
+                    orientation: "row",
+                    alignment: [ "fill", "top" ]
                 },
                 group: {
+                    param: [ "render_group", [ 0, -6, 50, 22 ] ],
                     style: {
-                        orientation: "row",
-                        alignment: [ "left", "center" ]
+                        orientation: "stack",
+                        alignment: [ "left", "top" ]
                     },
-                    checkbox1: {
+                    group: {
                         style: {
-                            alignment: [ "left", "center" ],
-                            value: false
+                            orientation: "row",
+                            alignment: [ "left", "center" ]
                         },
-                        param: [ "PNG_Checkbox", undefined, "PNG" ]
-                    },
-                    checkbox2: {
-                        style: {
-                            alignment: [ "left", "center" ],
-                            value: true
+                        checkbox1: {
+                            style: {
+                                alignment: [ "left", "center" ],
+                                value: false
+                            },
+                            param: [ "PNG_Checkbox", undefined, "PNG" ]
                         },
-                        param: [ "TGA_Checkbox", undefined, "TGA" ]
+                        checkbox2: {
+                            style: {
+                                alignment: [ "left", "center" ],
+                                value: true
+                            },
+                            param: [ "TGA_Checkbox", undefined, "TGA" ]
+                        },
+                        checkbox3: {
+                            style: {
+                                alignment: [ "left", "center" ],
+                                value: false
+                            },
+                            param: [ "PNG_NoAlpha_Checkbox", undefined, "PNG(NoAlpha)" ]
+                        },
+                        checkbox4: {
+                            style: {
+                                alignment: [ "left", "center" ],
+                                value: false
+                            },
+                            param: [ "TGA_NoAlpha_Checkbox", undefined, "TGA(NoAlpha)" ]
+                        }
                     }
-                }
-            },
-            button: {
-                style: {
-                    alignment: [ "fill", "top" ],
-                    onClick: render
                 },
-                param: [ "Rrender", [ 0, 0, 22, globalHeight ], "Render" ]
+                button: {
+                    style: {
+                        alignment: [ "fill", "top" ],
+                        onClick: render
+                    },
+                    param: [ "Rrender", [ 0, 0, 22, globalHeight ], "Render" ]
+                }
             }
         }
     };
@@ -1265,11 +1288,33 @@
     var realHeight_Edittext = elements.getElementById("realHeight_Edittext");
     var PNG_Checkbox = elements.getElementById("PNG_Checkbox");
     var TGA_Checkbox = elements.getElementById("TGA_Checkbox");
+    var PNG_NoAlpha_Checkbox = elements.getElementById("PNG_NoAlpha_Checkbox");
+    var TGA_NoAlpha_Checkbox = elements.getElementById("TGA_NoAlpha_Checkbox");
     var digits_Statictext = elements.getElementById("digits_Statictext");
     var digits_Scrollbar = elements.getElementById("digits_Scrollbar");
     realWidth_Edittext.enabled = realHeight_Edittext.enabled = false;
     digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;
     realSize_Checkbox.onClick = enableRealsize;
+    PNG_Checkbox.onClick = function() {
+        if (PNG_Checkbox.value && PNG_NoAlpha_Checkbox.value) {
+            PNG_NoAlpha_Checkbox.value = false;
+        }
+    };
+    PNG_NoAlpha_Checkbox.onClick = function() {
+        if (PNG_Checkbox.value && PNG_NoAlpha_Checkbox.value) {
+            PNG_Checkbox.value = false;
+        }
+    };
+    TGA_Checkbox.onClick = function() {
+        if (TGA_Checkbox.value && TGA_NoAlpha_Checkbox.value) {
+            TGA_NoAlpha_Checkbox.value = false;
+        }
+    };
+    TGA_NoAlpha_Checkbox.onClick = function() {
+        if (TGA_Checkbox.value && TGA_NoAlpha_Checkbox.value) {
+            TGA_Checkbox.value = false;
+        }
+    };
     realWidth_Edittext.onChange = realWidth_Edittext.onChanging = realWidthValidation;
     realHeight_Edittext.onChange = realHeight_Edittext.onChanging = realWidthValidation;
     function realWidthValidation() {
@@ -1475,13 +1520,26 @@
         if (!activeItem) {
             return;
         }
-        if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value)) {
+        if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value || PNG_NoAlpha_Checkbox.value || TGA_NoAlpha_Checkbox.value)) {
             renderQueueItems.add(activeItem);
         }
         var targetRenderQueueItem = renderQueueItems[renderQueueItems.length];
         var numOutputModules = targetRenderQueueItem.numOutputModules;
         var pngFile, tgaFile, renderFolder;
-        if (PNG_Checkbox.value && TGA_Checkbox.value) {
+        var i = 0;
+        if (PNG_Checkbox.value) {
+            i++;
+        }
+        if (TGA_Checkbox.value) {
+            i++;
+        }
+        if (PNG_NoAlpha_Checkbox.value) {
+            i++;
+        }
+        if (TGA_NoAlpha_Checkbox.value) {
+            i++;
+        }
+        while (--i) {
             targetRenderQueueItem.outputModules.add();
         }
         if (PNG_Checkbox.value) {
@@ -1494,6 +1552,22 @@
         }
         if (TGA_Checkbox.value) {
             var targetTemplateName = "TGA";
+            var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            applyRenderSetting(targetRenderQueueItem);
+            targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
+            tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            renderFolder = tgaFile.parent;
+        }
+        if (PNG_NoAlpha_Checkbox.value) {
+            var targetTemplateName = "PNG(NoAlpha)";
+            var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
+            applyRenderSetting(targetRenderQueueItem);
+            targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
+            pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            renderFolder = pngFile.parent;
+        }
+        if (TGA_NoAlpha_Checkbox.value) {
+            var targetTemplateName = "TGA(NoAlpha)";
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
             applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
