@@ -33,117 +33,194 @@ let UISource = {
 		orientation: 'column',
 		alignment: ['fill', 'fill']
 	},
-	group1: {
-		param: ['textureSize_group'],
+	panel1: {
 		margins: 0,
 		spacing: 0,
 		style: {
-			orientation: 'row',
-			alignment: ['fill', 'top']
+			orientation: 'stack',
+			alignment: ['fill', 'top'],
+			bounds: [0, 0, 50, 114],
+			text: 'Method'
 		},
-		statictext: {
-			style: { alignment: ['left', 'center'] },
-			param: [undefined, [0, 0, 26, globalHeight], 'Size: ']
-		},
-		group: {
+		group1: {
+			param: ['textureSize_group'],
+			margins: 0,
+			spacing: 0,
 			style: {
-				orientation: 'stack',
-				alignment: ['fill', 'center']
+				orientation: 'row',
+				alignment: ['fill', 'top'],
+				bounds: [0, 0, 50, 26]
 			},
-			group1: {
+			statictext: {
+				style: { alignment: ['left', 'center'] },
+				param: [undefined, [0, 0, 26, globalHeight], 'Size: ']
+			},
+			group: {
 				style: {
-					margins: 0,
-					spacing: 20,
-					orientation: 'row',
+					orientation: 'stack',
 					alignment: ['fill', 'center']
 				},
-				param: ['textureSize', [0, 0, 200, globalHeight]],
-				dropDownList1: {
-					style: { alignment: ['fill', 'fill'], selection: 6 },
-					param: [
-						'textureWidth_dropDownList',
-						[0, 0, 50, globalHeight],
-						textureSizeArray
-					]
+				group1: {
+					style: {
+						margins: 0,
+						spacing: 20,
+						orientation: 'row',
+						alignment: ['fill', 'center']
+					},
+					param: ['textureSize', [0, 0, 200, globalHeight]],
+					dropDownList1: {
+						style: { alignment: ['fill', 'fill'], selection: 6 },
+						param: [
+							'textureWidth_dropDownList',
+							[0, 0, 50, globalHeight],
+							textureSizeArray
+						]
+					},
+					dropDownList2: {
+						style: { alignment: ['fill', 'fill'], selection: 6 },
+						param: [
+							'textureHeight_dropDownList',
+							[0, 0, 50, globalHeight],
+							textureSizeArray
+						]
+					}
 				},
-				dropDownList2: {
-					style: { alignment: ['fill', 'fill'], selection: 6 },
-					param: [
-						'textureHeight_dropDownList',
-						[0, 0, 50, globalHeight],
-						textureSizeArray
-					]
+				group2: {
+					style: {
+						orientation: 'row',
+						alignment: ['center', 'center']
+					},
+					statictext1: {
+						style: { alignment: ['center', 'center'] },
+						param: [undefined, [0, 0, 12, globalHeight], ' x']
+					}
+				}
+			},
+			button: {
+				style: {
+					alignment: ['right', 'center'],
+					onClick: refreshTextureSize
+				},
+				param: [undefined, [0, 0, 22, globalHeight], '↺']
+			}
+		},
+		group2: {
+			param: ['realSize_group'],
+			margins: 0,
+			spacing: 0,
+			style: {
+				orientation: 'row',
+				alignment: ['fill', 'bottom'],
+				bounds: [0, -28, 50, 26]
+			},
+			group1: {
+				param: ['realSize_group', [0, -6, 50, 22]],
+				style: {
+					orientation: 'stack',
+					alignment: ['left', 'top']
+				},
+				group: {
+					style: {
+						orientation: 'row',
+						alignment: ['left', 'center']
+					},
+					checkbox: {
+						style: { alignment: ['left', 'center'], value: false },
+						param: ['realSize_Checkbox', undefined, 'Realsize']
+					}
 				}
 			},
 			group2: {
 				style: {
-					orientation: 'row',
-					alignment: ['center', 'center']
+					orientation: 'stack',
+					alignment: ['fill', 'top']
 				},
-				statictext1: {
-					style: { alignment: ['center', 'center'] },
-					param: [undefined, [0, 0, 12, globalHeight], ' x']
+				group1: {
+					style: {
+						margins: 0,
+						spacing: 20,
+						orientation: 'row',
+						alignment: ['fill', 'center']
+					},
+					param: ['realSize', [0, 0, 200, globalHeight]],
+					edittext1: {
+						style: { alignment: ['fill', 'center'], enable: false },
+						param: ['realWidth_Edittext', [0, 0, 26, globalHeight], '256']
+					},
+					edittext2: {
+						style: { alignment: ['fill', 'center'], enable: false },
+						param: ['realHeight_Edittext', [0, 0, 26, globalHeight], '256']
+					}
+				},
+				group2: {
+					style: {
+						orientation: 'row',
+						alignment: ['center', 'center']
+					},
+					statictext1: {
+						style: { alignment: ['center', 'center'] },
+						param: [undefined, [0, 0, 12, globalHeight], ' x']
+					}
+				}
+			},
+			button: {
+				style: {
+					alignment: ['right', 'top'],
+					onClick: refreshRealSize
+				},
+				param: [undefined, [0, 0, 22, globalHeight], '↺']
+			}
+		},
+		group3: {
+			style: {
+				orientation: 'stack',
+				alignment: ['fill', 'bottom'],
+				bounds: [0, 0, 50, 26]
+			},
+			group3: {
+				param: ['textureName_group'],
+				margins: 0,
+				spacing: 0,
+				style: {
+					orientation: 'row',
+					alignment: ['fill', 'top']
+				},
+				group1: {
+					margins: 0,
+					spacing: 0,
+					style: {
+						orientation: 'row',
+						alignment: ['fill', 'top']
+					},
+					statictext: {
+						style: { alignment: ['left', 'center'] },
+						param: [undefined, [0, 0, 36, globalHeight], 'Name: ']
+					},
+					dropDownList: {
+						style: { alignment: ['fill', 'fill'], selection: 0 },
+						param: [
+							'textureName_dropDownList',
+							[0, 0, 75, globalHeight],
+							textureNameArray
+						]
+					}
+				},
+				statictext: {
+					style: { alignment: ['right', 'center'] },
+					param: ['digits_Statictext', [0, 0, 46, globalHeight], 'Digits: 2']
+				},
+				scrollbar: {
+					style: { alignment: ['right', 'center'], selection: 0 },
+					param: ['digits_Scrollbar', [0, 0, 120, 10], 2, 0, 6]
+				},
+				button: {
+					style: {
+						alignment: ['right', 'center'],
+						onClick: refreshScrollbar
+					},
+					param: [undefined, [0, 0, 22, globalHeight], '↺']
 				}
 			}
-		},
-		button: {
-			style: {
-				alignment: ['right', 'center'],
-				onClick: refreshTextureSize
-			},
-			param: [undefined, [0, 0, 22, globalHeight], '↺']
-		}
-	},
-	group2: {
-		param: ['textureName_group'],
-		margins: 0,
-		spacing: 0,
-		style: {
-			orientation: 'row',
-			alignment: ['fill', 'top']
-		},
-		group1: {
-			margins: 0,
-			spacing: 0,
-			style: {
-				orientation: 'row',
-				alignment: ['fill', 'top']
-			},
-			statictext: {
-				style: { alignment: ['left', 'center'] },
-				param: [undefined, [0, 0, 36, globalHeight], 'Name: ']
-			},
-			dropDownList: {
-				style: { alignment: ['fill', 'fill'], selection: 0 },
-				param: [
-					'textureName_dropDownList',
-					[0, 0, 50, globalHeight],
-					textureNameArray
-				]
-			}
-		},
-		group2: {
-			margins: 0,
-			spacing: 0,
-			style: {
-				orientation: 'row',
-				alignment: ['fill', 'top']
-			},
-			statictext: {
-				style: { alignment: ['left', 'center'] },
-				param: ['digits_Statictext', [0, 0, 46, globalHeight], 'Digits: 2']
-			},
-			scrollbar: {
-				style: { alignment: ['fill', 'center'], selection: 0 },
-				param: ['digits_Scrollbar', [0, 0, 140, 10], 2, 0, 6]
-			}
-		},
-		button: {
-			style: {
-				alignment: ['right', 'center'],
-				onClick: refreshScrollbar
-			},
-			param: [undefined, [0, 0, 22, globalHeight], '↺']
 		}
 	},
 	panel3: {
@@ -245,6 +322,17 @@ let textureHeight_dropDownList = elements.getElementById(
 let textureName_dropDownList = elements.getElementById(
 	'textureName_dropDownList'
 ) as unknown as DropDownList;
+
+let realSize_Checkbox = elements.getElementById(
+	'realSize_Checkbox'
+) as unknown as Checkbox;
+let realWidth_Edittext = elements.getElementById(
+	'realWidth_Edittext'
+) as unknown as EditText;
+let realHeight_Edittext = elements.getElementById(
+	'realHeight_Edittext'
+) as unknown as EditText;
+
 let PNG_Checkbox = elements.getElementById(
 	'PNG_Checkbox'
 ) as unknown as Checkbox;
@@ -258,7 +346,21 @@ let digits_Scrollbar = elements.getElementById(
 	'digits_Scrollbar'
 ) as unknown as Scrollbar;
 
+realWidth_Edittext.enabled = realHeight_Edittext.enabled = false;
 digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;
+realSize_Checkbox.onClick = enableRealsize;
+realWidth_Edittext.onChange = realWidth_Edittext.onChanging =
+	realWidthValidation;
+realHeight_Edittext.onChange = realHeight_Edittext.onChanging =
+	realWidthValidation;
+
+function realWidthValidation() {
+	realWidth_Edittext.text = realWidth_Edittext.text.replace(/\D/g, '');
+}
+function enableRealsize() {
+	realWidth_Edittext.enabled = realHeight_Edittext.enabled =
+		realSize_Checkbox.value;
+}
 
 function refreshDigitsText() {
 	digits_Statictext.text =
@@ -288,6 +390,15 @@ function refreshTextureSize() {
 		textureHeight_dropDownList.selection = 6;
 }
 
+function refreshRealSize() {
+	realWidth_Edittext.text = _.toString(
+		textureWidth_dropDownList.selection as number
+	);
+	realHeight_Edittext.text = _.toString(
+		textureHeight_dropDownList.selection as number
+	);
+}
+
 function refreshScrollbar() {
 	digits_Scrollbar.value = 2;
 	refreshDigitsText();
@@ -304,110 +415,120 @@ function dataLeftCompleting(
 }
 
 function createComp() {
-	let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
-		.index;
-	let categoryFolderName = textureNameArray[categoryFolderIndex];
-	let compWidth =
-		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
-	let compHeight =
-		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
-	let parentFolderName =
-		dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
-	let parentFolder = getCategoryFolder(parentFolderName);
-	let finalCompName = getFinalCompName(
-		categoryFolderName,
-		compWidth,
-		compHeight,
-		parentFolder
-	);
-	let targetComp = items.addComp(
-		finalCompName,
-		compWidth,
-		compHeight,
-		1,
-		1 / 30,
-		30
-	);
-	(targetComp as CompItem).parentFolder = parentFolder;
-	targetComp.openInViewer();
+	_.setUndoGroup('Create comp', () => {
+		let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
+			.index;
+		let categoryFolderName = textureNameArray[categoryFolderIndex];
+		let compWidth =
+			textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
+		let compHeight =
+			textureSizeArray[
+				(textureHeight_dropDownList.selection as ListItem).index
+			];
+		let parentFolderName =
+			dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
+		let parentFolder = getCategoryFolder(parentFolderName);
+		let finalCompName = getFinalCompName(
+			categoryFolderName,
+			realSize_Checkbox.value ? realWidth_Edittext.text : compWidth,
+			realSize_Checkbox.value ? realHeight_Edittext.text : compHeight,
+			parentFolder
+		);
+		let targetComp = items.addComp(
+			finalCompName,
+			compWidth,
+			compHeight,
+			1,
+			1 / 30,
+			30
+		);
+		(targetComp as CompItem).parentFolder = parentFolder;
+		targetComp.openInViewer();
+	});
 }
 
 function duplicateComp() {
-	activeItem = _.getActiveItem();
-	if (!activeItem) return;
-	let nameArray = (activeItem as CompItem).name.split('_');
-	let compName = nameArray[1];
-	let compSize = nameArray[nameArray.length - 2];
-	let compWidth = _.toNumber(compSize.split('x')[0]);
-	let compHeight = _.toNumber(compSize.split('x')[1]);
-	let originComp = activeItem as CompItem;
-	let parentFolder = originComp.parentFolder;
-	let finalCompName = getFinalCompName(
-		compName,
-		compWidth,
-		compHeight,
-		parentFolder
-	);
-	let targetComp = items.addComp(
-		finalCompName,
-		compWidth,
-		compHeight,
-		1,
-		1 / 30,
-		30
-	);
-	(targetComp as CompItem).parentFolder = parentFolder;
-	_.eachLayersRight(originComp, layer => {
-		layer.copyToComp(targetComp);
+	_.setUndoGroup('Duplicate comp', () => {
+		activeItem = _.getActiveItem();
+		if (!activeItem) return;
+		let nameArray = (activeItem as CompItem).name.split('_');
+		let compName = nameArray[1];
+		let compSize = nameArray[nameArray.length - 2];
+		let compWidth = _.toNumber(compSize.split('x')[0]);
+		let compHeight = _.toNumber(compSize.split('x')[1]);
+		let originComp = activeItem as CompItem;
+		let parentFolder = originComp.parentFolder;
+		let finalCompName = getFinalCompName(
+			compName,
+			realSize_Checkbox.value ? realWidth_Edittext.text : compWidth,
+			realSize_Checkbox.value ? realHeight_Edittext.text : compHeight,
+			parentFolder
+		);
+		let targetComp = items.addComp(
+			finalCompName,
+			compWidth,
+			compHeight,
+			1,
+			1 / 30,
+			30
+		);
+		(targetComp as CompItem).parentFolder = parentFolder;
+		_.eachLayersRight(originComp, layer => {
+			layer.copyToComp(targetComp);
+		});
+		targetComp.openInViewer();
 	});
-	targetComp.openInViewer();
 }
 
 function changeComp() {
-	activeItem = _.getActiveItem();
-	if (!activeItem) return;
-	let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
-		.index;
-	let categoryFolderName = textureNameArray[categoryFolderIndex];
-	let compWidth =
-		textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
-	let compHeight =
-		textureSizeArray[(textureHeight_dropDownList.selection as ListItem).index];
-	let parentFolderName =
-		dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
-	let targetComp = activeItem as CompItem;
-	let parentFolder = getCategoryFolder(parentFolderName);
-	let finalCompName = getFinalCompName(
-		categoryFolderName,
-		compWidth,
-		compHeight,
-		parentFolder
-	);
+	_.setUndoGroup('Change comp', () => {
+		activeItem = _.getActiveItem();
+		if (!activeItem) return;
+		let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
+			.index;
+		let categoryFolderName = textureNameArray[categoryFolderIndex];
+		let compWidth =
+			textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
+		let compHeight =
+			textureSizeArray[
+				(textureHeight_dropDownList.selection as ListItem).index
+			];
+		let parentFolderName =
+			dataLeftCompleting(categoryFolderIndex, 2) + ' ' + categoryFolderName;
+		let targetComp = activeItem as CompItem;
+		let parentFolder = getCategoryFolder(parentFolderName);
+		let finalCompName = getFinalCompName(
+			categoryFolderName,
+			realSize_Checkbox.value ? realWidth_Edittext.text : compWidth,
+			realSize_Checkbox.value ? realHeight_Edittext.text : compHeight,
+			parentFolder
+		);
 
-	targetComp.width = compWidth;
-	targetComp.height = compHeight;
-	targetComp.name = finalCompName;
-	targetComp.parentFolder = parentFolder;
-	targetComp.openInViewer();
+		targetComp.width = compWidth;
+		targetComp.height = compHeight;
+		targetComp.name = finalCompName;
+		targetComp.parentFolder = parentFolder;
+		targetComp.openInViewer();
 
-	let existBg = false;
-	let bgComment = 'TextureBackGround';
-	let bgColor: ThreeDColorValue = [1, 1, 1];
-	let bgColorName = 'None';
+		let existBg = false;
+		let bgComment = 'TextureBackGround';
+		let bgColor: ThreeDColorValue = [1, 1, 1];
+		let bgColorName = 'None';
 
-	_.eachLayers(targetComp, layer => {
-		if (layer.comment == bgComment) {
-			existBg = true;
-			layer.locked = false;
-			bgColorName = layer.name.split(' ')[1];
-			layer.remove();
-		}
+		_.eachLayers(targetComp, layer => {
+			if (layer.comment == bgComment) {
+				existBg = true;
+				layer.locked = false;
+				bgColorName = layer.name.split(' ')[1];
+				layer.remove();
+			}
+		});
+
+		if (!existBg) return;
+		if (bgColorName == 'Black') bgColor = [0, 0, 0];
+		if (bgColorName == 'White') bgColor = [1, 1, 1];
+		createTargetColorBg(bgColor, bgColorName);
 	});
-
-	if (!existBg) return;
-	if (bgColorName == 'Black') bgColor = [0, 0, 0];
-	if (bgColorName == 'White') bgColor = [1, 1, 1];
-	createTargetColorBg(bgColor, bgColorName);
 }
 
 function createBg(
@@ -427,19 +548,27 @@ function createBg(
 }
 
 function createBlackBg() {
-	createTargetColorBg([0, 0, 0], 'Black');
+	_.setUndoGroup('Create Balck Background', () => {
+		createTargetColorBg([0, 0, 0], 'Black');
+	});
 }
 
 function createWhiteBg() {
-	createTargetColorBg([1, 1, 1], 'White');
+	_.setUndoGroup('Create Balck Background', () => {
+		createTargetColorBg([1, 1, 1], 'White');
+	});
 }
 
 function createGreyBg() {
-	createTargetColorBg([0.5, 0.5, 0.5], 'Grey');
+	_.setUndoGroup('Create Balck Background', () => {
+		createTargetColorBg([0.5, 0.5, 0.5], 'Grey');
+	});
 }
 
 function createNoBg() {
-	createTargetColorBg([1, 1, 1], 'None');
+	_.setUndoGroup('Create Balck Background', () => {
+		createTargetColorBg([1, 1, 1], 'None');
+	});
 }
 
 function createTargetColorBg(
@@ -494,7 +623,10 @@ function createTargetColorBg(
 function getSolidsFolder() {
 	let solidsFolder: FolderItem | null;
 	_.eachItems(rootFolder, folderItem => {
-		if (folderItem.name === 'Solids' && _.isFolderItem(folderItem))
+		if (
+			(folderItem.name === 'Solids' || folderItem.name === 'solids') &&
+			_.isFolderItem(folderItem)
+		)
 			solidsFolder = folderItem;
 	});
 	return solidsFolder!;

@@ -1,4 +1,4 @@
-// 2023/8/17 19:09:18
+// 2023/8/22 10:00:45
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -911,6 +911,11 @@
     }
     var isAVLayer = createIsNativeType(AVLayer);
     var isFolderItem = createIsNativeType(FolderItem);
+    function setUndoGroup(undoString, func) {
+        app.beginUndoGroup(undoString);
+        func();
+        app.endUndoGroup();
+    }
     var textureSizeArray = [ 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
     var textureNameArray = [ "Glow", "Light", "Flare", "Spark", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence" ];
     var textureName = function(compName, compWidth, compHeight, index) {
@@ -925,125 +930,213 @@
             orientation: "column",
             alignment: [ "fill", "fill" ]
         },
-        group1: {
-            param: [ "textureSize_group" ],
+        panel1: {
             margins: 0,
             spacing: 0,
             style: {
-                orientation: "row",
-                alignment: [ "fill", "top" ]
+                orientation: "stack",
+                alignment: [ "fill", "top" ],
+                bounds: [ 0, 0, 50, 114 ],
+                text: "Method"
             },
-            statictext: {
+            group1: {
+                param: [ "textureSize_group" ],
+                margins: 0,
+                spacing: 0,
                 style: {
-                    alignment: [ "left", "center" ]
+                    orientation: "row",
+                    alignment: [ "fill", "top" ],
+                    bounds: [ 0, 0, 50, 26 ]
                 },
-                param: [ undefined, [ 0, 0, 26, globalHeight ], "Size: " ]
-            },
-            group: {
-                style: {
-                    orientation: "stack",
-                    alignment: [ "fill", "center" ]
-                },
-                group1: {
+                statictext: {
                     style: {
-                        margins: 0,
-                        spacing: 20,
-                        orientation: "row",
+                        alignment: [ "left", "center" ]
+                    },
+                    param: [ undefined, [ 0, 0, 26, globalHeight ], "Size: " ]
+                },
+                group: {
+                    style: {
+                        orientation: "stack",
                         alignment: [ "fill", "center" ]
                     },
-                    param: [ "textureSize", [ 0, 0, 200, globalHeight ] ],
-                    dropDownList1: {
+                    group1: {
                         style: {
-                            alignment: [ "fill", "fill" ],
-                            selection: 6
+                            margins: 0,
+                            spacing: 20,
+                            orientation: "row",
+                            alignment: [ "fill", "center" ]
                         },
-                        param: [ "textureWidth_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
+                        param: [ "textureSize", [ 0, 0, 200, globalHeight ] ],
+                        dropDownList1: {
+                            style: {
+                                alignment: [ "fill", "fill" ],
+                                selection: 6
+                            },
+                            param: [ "textureWidth_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
+                        },
+                        dropDownList2: {
+                            style: {
+                                alignment: [ "fill", "fill" ],
+                                selection: 6
+                            },
+                            param: [ "textureHeight_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
+                        }
                     },
-                    dropDownList2: {
+                    group2: {
                         style: {
-                            alignment: [ "fill", "fill" ],
-                            selection: 6
+                            orientation: "row",
+                            alignment: [ "center", "center" ]
                         },
-                        param: [ "textureHeight_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
+                        statictext1: {
+                            style: {
+                                alignment: [ "center", "center" ]
+                            },
+                            param: [ undefined, [ 0, 0, 12, globalHeight ], " x" ]
+                        }
+                    }
+                },
+                button: {
+                    style: {
+                        alignment: [ "right", "center" ],
+                        onClick: refreshTextureSize
+                    },
+                    param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
+                }
+            },
+            group2: {
+                param: [ "realSize_group" ],
+                margins: 0,
+                spacing: 0,
+                style: {
+                    orientation: "row",
+                    alignment: [ "fill", "bottom" ],
+                    bounds: [ 0, -28, 50, 26 ]
+                },
+                group1: {
+                    param: [ "realSize_group", [ 0, -6, 50, 22 ] ],
+                    style: {
+                        orientation: "stack",
+                        alignment: [ "left", "top" ]
+                    },
+                    group: {
+                        style: {
+                            orientation: "row",
+                            alignment: [ "left", "center" ]
+                        },
+                        checkbox: {
+                            style: {
+                                alignment: [ "left", "center" ],
+                                value: false
+                            },
+                            param: [ "realSize_Checkbox", undefined, "Realsize" ]
+                        }
                     }
                 },
                 group2: {
                     style: {
-                        orientation: "row",
-                        alignment: [ "center", "center" ]
+                        orientation: "stack",
+                        alignment: [ "fill", "top" ]
                     },
-                    statictext1: {
+                    group1: {
                         style: {
+                            margins: 0,
+                            spacing: 20,
+                            orientation: "row",
+                            alignment: [ "fill", "center" ]
+                        },
+                        param: [ "realSize", [ 0, 0, 200, globalHeight ] ],
+                        edittext1: {
+                            style: {
+                                alignment: [ "fill", "center" ],
+                                enable: false
+                            },
+                            param: [ "realWidth_Edittext", [ 0, 0, 26, globalHeight ], "256" ]
+                        },
+                        edittext2: {
+                            style: {
+                                alignment: [ "fill", "center" ],
+                                enable: false
+                            },
+                            param: [ "realHeight_Edittext", [ 0, 0, 26, globalHeight ], "256" ]
+                        }
+                    },
+                    group2: {
+                        style: {
+                            orientation: "row",
                             alignment: [ "center", "center" ]
                         },
-                        param: [ undefined, [ 0, 0, 12, globalHeight ], " x" ]
+                        statictext1: {
+                            style: {
+                                alignment: [ "center", "center" ]
+                            },
+                            param: [ undefined, [ 0, 0, 12, globalHeight ], " x" ]
+                        }
+                    }
+                },
+                button: {
+                    style: {
+                        alignment: [ "right", "top" ],
+                        onClick: refreshRealSize
+                    },
+                    param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
+                }
+            },
+            group3: {
+                style: {
+                    orientation: "stack",
+                    alignment: [ "fill", "bottom" ],
+                    bounds: [ 0, 0, 50, 26 ]
+                },
+                group3: {
+                    param: [ "textureName_group" ],
+                    margins: 0,
+                    spacing: 0,
+                    style: {
+                        orientation: "row",
+                        alignment: [ "fill", "top" ]
+                    },
+                    group1: {
+                        margins: 0,
+                        spacing: 0,
+                        style: {
+                            orientation: "row",
+                            alignment: [ "fill", "top" ]
+                        },
+                        statictext: {
+                            style: {
+                                alignment: [ "left", "center" ]
+                            },
+                            param: [ undefined, [ 0, 0, 36, globalHeight ], "Name: " ]
+                        },
+                        dropDownList: {
+                            style: {
+                                alignment: [ "fill", "fill" ],
+                                selection: 0
+                            },
+                            param: [ "textureName_dropDownList", [ 0, 0, 75, globalHeight ], textureNameArray ]
+                        }
+                    },
+                    statictext: {
+                        style: {
+                            alignment: [ "right", "center" ]
+                        },
+                        param: [ "digits_Statictext", [ 0, 0, 46, globalHeight ], "Digits: 2" ]
+                    },
+                    scrollbar: {
+                        style: {
+                            alignment: [ "right", "center" ],
+                            selection: 0
+                        },
+                        param: [ "digits_Scrollbar", [ 0, 0, 120, 10 ], 2, 0, 6 ]
+                    },
+                    button: {
+                        style: {
+                            alignment: [ "right", "center" ],
+                            onClick: refreshScrollbar
+                        },
+                        param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
                     }
                 }
-            },
-            button: {
-                style: {
-                    alignment: [ "right", "center" ],
-                    onClick: refreshTextureSize
-                },
-                param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
-            }
-        },
-        group2: {
-            param: [ "textureName_group" ],
-            margins: 0,
-            spacing: 0,
-            style: {
-                orientation: "row",
-                alignment: [ "fill", "top" ]
-            },
-            group1: {
-                margins: 0,
-                spacing: 0,
-                style: {
-                    orientation: "row",
-                    alignment: [ "fill", "top" ]
-                },
-                statictext: {
-                    style: {
-                        alignment: [ "left", "center" ]
-                    },
-                    param: [ undefined, [ 0, 0, 36, globalHeight ], "Name: " ]
-                },
-                dropDownList: {
-                    style: {
-                        alignment: [ "fill", "fill" ],
-                        selection: 0
-                    },
-                    param: [ "textureName_dropDownList", [ 0, 0, 50, globalHeight ], textureNameArray ]
-                }
-            },
-            group2: {
-                margins: 0,
-                spacing: 0,
-                style: {
-                    orientation: "row",
-                    alignment: [ "fill", "top" ]
-                },
-                statictext: {
-                    style: {
-                        alignment: [ "left", "center" ]
-                    },
-                    param: [ "digits_Statictext", [ 0, 0, 46, globalHeight ], "Digits: 2" ]
-                },
-                scrollbar: {
-                    style: {
-                        alignment: [ "fill", "center" ],
-                        selection: 0
-                    },
-                    param: [ "digits_Scrollbar", [ 0, 0, 140, 10 ], 2, 0, 6 ]
-                }
-            },
-            button: {
-                style: {
-                    alignment: [ "right", "center" ],
-                    onClick: refreshScrollbar
-                },
-                param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
             }
         },
         panel3: {
@@ -1167,11 +1260,24 @@
     var textureWidth_dropDownList = elements.getElementById("textureWidth_dropDownList");
     var textureHeight_dropDownList = elements.getElementById("textureHeight_dropDownList");
     var textureName_dropDownList = elements.getElementById("textureName_dropDownList");
+    var realSize_Checkbox = elements.getElementById("realSize_Checkbox");
+    var realWidth_Edittext = elements.getElementById("realWidth_Edittext");
+    var realHeight_Edittext = elements.getElementById("realHeight_Edittext");
     var PNG_Checkbox = elements.getElementById("PNG_Checkbox");
     var TGA_Checkbox = elements.getElementById("TGA_Checkbox");
     var digits_Statictext = elements.getElementById("digits_Statictext");
     var digits_Scrollbar = elements.getElementById("digits_Scrollbar");
+    realWidth_Edittext.enabled = realHeight_Edittext.enabled = false;
     digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;
+    realSize_Checkbox.onClick = enableRealsize;
+    realWidth_Edittext.onChange = realWidth_Edittext.onChanging = realWidthValidation;
+    realHeight_Edittext.onChange = realHeight_Edittext.onChanging = realWidthValidation;
+    function realWidthValidation() {
+        realWidth_Edittext.text = realWidth_Edittext.text.replace(/\D/g, "");
+    }
+    function enableRealsize() {
+        realWidth_Edittext.enabled = realHeight_Edittext.enabled = realSize_Checkbox.value;
+    }
     function refreshDigitsText() {
         digits_Statictext.text = "Digits: " + toString(digits_Scrollbar.value.toFixed(0));
     }
@@ -1195,6 +1301,10 @@
     function refreshTextureSize() {
         textureWidth_dropDownList.selection = textureHeight_dropDownList.selection = 6;
     }
+    function refreshRealSize() {
+        realWidth_Edittext.text = toString(textureWidth_dropDownList.selection);
+        realHeight_Edittext.text = toString(textureHeight_dropDownList.selection);
+    }
     function refreshScrollbar() {
         digits_Scrollbar.value = 2;
         refreshDigitsText();
@@ -1205,92 +1315,106 @@
         return finalData.slice(-bits);
     }
     function createComp() {
-        var categoryFolderIndex = textureName_dropDownList.selection.index;
-        var categoryFolderName = textureNameArray[categoryFolderIndex];
-        var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
-        var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
-        var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
-        var parentFolder = getCategoryFolder(parentFolderName);
-        var finalCompName = getFinalCompName(categoryFolderName, compWidth, compHeight, parentFolder);
-        var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
-        targetComp.parentFolder = parentFolder;
-        targetComp.openInViewer();
+        setUndoGroup("Create comp", function() {
+            var categoryFolderIndex = textureName_dropDownList.selection.index;
+            var categoryFolderName = textureNameArray[categoryFolderIndex];
+            var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
+            var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
+            var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
+            var parentFolder = getCategoryFolder(parentFolderName);
+            var finalCompName = getFinalCompName(categoryFolderName, realSize_Checkbox.value ? realWidth_Edittext.text : compWidth, realSize_Checkbox.value ? realHeight_Edittext.text : compHeight, parentFolder);
+            var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
+            targetComp.parentFolder = parentFolder;
+            targetComp.openInViewer();
+        });
     }
     function duplicateComp() {
-        activeItem = getActiveItem();
-        if (!activeItem) {
-            return;
-        }
-        var nameArray = activeItem.name.split("_");
-        var compName = nameArray[1];
-        var compSize = nameArray[nameArray.length - 2];
-        var compWidth = toNumber(compSize.split("x")[0]);
-        var compHeight = toNumber(compSize.split("x")[1]);
-        var originComp = activeItem;
-        var parentFolder = originComp.parentFolder;
-        var finalCompName = getFinalCompName(compName, compWidth, compHeight, parentFolder);
-        var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
-        targetComp.parentFolder = parentFolder;
-        eachLayersRight(originComp, function(layer) {
-            layer.copyToComp(targetComp);
+        setUndoGroup("Duplicate comp", function() {
+            activeItem = getActiveItem();
+            if (!activeItem) {
+                return;
+            }
+            var nameArray = activeItem.name.split("_");
+            var compName = nameArray[1];
+            var compSize = nameArray[nameArray.length - 2];
+            var compWidth = toNumber(compSize.split("x")[0]);
+            var compHeight = toNumber(compSize.split("x")[1]);
+            var originComp = activeItem;
+            var parentFolder = originComp.parentFolder;
+            var finalCompName = getFinalCompName(compName, realSize_Checkbox.value ? realWidth_Edittext.text : compWidth, realSize_Checkbox.value ? realHeight_Edittext.text : compHeight, parentFolder);
+            var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
+            targetComp.parentFolder = parentFolder;
+            eachLayersRight(originComp, function(layer) {
+                layer.copyToComp(targetComp);
+            });
+            targetComp.openInViewer();
         });
-        targetComp.openInViewer();
     }
     function changeComp() {
-        activeItem = getActiveItem();
-        if (!activeItem) {
-            return;
-        }
-        var categoryFolderIndex = textureName_dropDownList.selection.index;
-        var categoryFolderName = textureNameArray[categoryFolderIndex];
-        var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
-        var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
-        var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
-        var targetComp = activeItem;
-        var parentFolder = getCategoryFolder(parentFolderName);
-        var finalCompName = getFinalCompName(categoryFolderName, compWidth, compHeight, parentFolder);
-        targetComp.width = compWidth;
-        targetComp.height = compHeight;
-        targetComp.name = finalCompName;
-        targetComp.parentFolder = parentFolder;
-        targetComp.openInViewer();
-        var existBg = false;
-        var bgComment = "TextureBackGround";
-        var bgColor = [ 1, 1, 1 ];
-        var bgColorName = "None";
-        eachLayers(targetComp, function(layer) {
-            if (layer.comment == bgComment) {
-                existBg = true;
-                layer.locked = false;
-                bgColorName = layer.name.split(" ")[1];
-                layer.remove();
+        setUndoGroup("Change comp", function() {
+            activeItem = getActiveItem();
+            if (!activeItem) {
+                return;
             }
+            var categoryFolderIndex = textureName_dropDownList.selection.index;
+            var categoryFolderName = textureNameArray[categoryFolderIndex];
+            var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
+            var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
+            var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
+            var targetComp = activeItem;
+            var parentFolder = getCategoryFolder(parentFolderName);
+            var finalCompName = getFinalCompName(categoryFolderName, realSize_Checkbox.value ? realWidth_Edittext.text : compWidth, realSize_Checkbox.value ? realHeight_Edittext.text : compHeight, parentFolder);
+            targetComp.width = compWidth;
+            targetComp.height = compHeight;
+            targetComp.name = finalCompName;
+            targetComp.parentFolder = parentFolder;
+            targetComp.openInViewer();
+            var existBg = false;
+            var bgComment = "TextureBackGround";
+            var bgColor = [ 1, 1, 1 ];
+            var bgColorName = "None";
+            eachLayers(targetComp, function(layer) {
+                if (layer.comment == bgComment) {
+                    existBg = true;
+                    layer.locked = false;
+                    bgColorName = layer.name.split(" ")[1];
+                    layer.remove();
+                }
+            });
+            if (!existBg) {
+                return;
+            }
+            if (bgColorName == "Black") {
+                bgColor = [ 0, 0, 0 ];
+            }
+            if (bgColorName == "White") {
+                bgColor = [ 1, 1, 1 ];
+            }
+            createTargetColorBg(bgColor, bgColorName);
         });
-        if (!existBg) {
-            return;
-        }
-        if (bgColorName == "Black") {
-            bgColor = [ 0, 0, 0 ];
-        }
-        if (bgColorName == "White") {
-            bgColor = [ 1, 1, 1 ];
-        }
-        createTargetColorBg(bgColor, bgColorName);
     }
     function createBg(targetComp, compWidth, compHeight, color, name) {
         return targetComp.layers.addSolid(color, name, toNumber(compWidth), toNumber(compHeight), 1);
     }
     function createBlackBg() {
-        createTargetColorBg([ 0, 0, 0 ], "Black");
+        setUndoGroup("Create Balck Background", function() {
+            createTargetColorBg([ 0, 0, 0 ], "Black");
+        });
     }
     function createWhiteBg() {
-        createTargetColorBg([ 1, 1, 1 ], "White");
+        setUndoGroup("Create Balck Background", function() {
+            createTargetColorBg([ 1, 1, 1 ], "White");
+        });
     }
     function createGreyBg() {
-        createTargetColorBg([ 0.5, 0.5, 0.5 ], "Grey");
+        setUndoGroup("Create Balck Background", function() {
+            createTargetColorBg([ 0.5, 0.5, 0.5 ], "Grey");
+        });
     }
     function createNoBg() {
-        createTargetColorBg([ 1, 1, 1 ], "None");
+        setUndoGroup("Create Balck Background", function() {
+            createTargetColorBg([ 1, 1, 1 ], "None");
+        });
     }
     function createTargetColorBg(targetColor, targetColorName) {
         activeItem = getActiveItem();
@@ -1338,7 +1462,7 @@
     function getSolidsFolder() {
         var solidsFolder;
         eachItems(rootFolder, function(folderItem) {
-            if (folderItem.name === "Solids" && isFolderItem(folderItem)) {
+            if ((folderItem.name === "Solids" || folderItem.name === "solids") && isFolderItem(folderItem)) {
                 solidsFolder = folderItem;
             }
         });
