@@ -288,7 +288,7 @@ let UISource = {
 				alignment: ['fill', 'top']
 			},
 			group: {
-				param: ['render_group', [0, -6, 50, 22]],
+				param: ['render_group', [0, -6, 200, 22]],
 				style: {
 					orientation: 'stack',
 					alignment: ['left', 'top']
@@ -456,6 +456,7 @@ function dataLeftCompleting(
 
 function createComp() {
 	_.setUndoGroup('Create comp', () => {
+		activeItem = _.getActiveItem();
 		let categoryFolderIndex = (textureName_dropDownList.selection as ListItem)
 			.index;
 		let categoryFolderName = textureNameArray[categoryFolderIndex];
@@ -494,8 +495,8 @@ function duplicateComp() {
 		let nameArray = (activeItem as CompItem).name.split('_');
 		let compName = nameArray[1];
 		let compSize = nameArray[nameArray.length - 2];
-		let compWidth = _.toNumber(compSize.split('x')[0]);
-		let compHeight = _.toNumber(compSize.split('x')[1]);
+		let compWidth = (activeItem as CompItem).width;
+		let compHeight = (activeItem as CompItem).height;
 		let originComp = activeItem as CompItem;
 		let parentFolder = originComp.parentFolder;
 		let finalCompName = getFinalCompName(
@@ -702,7 +703,11 @@ function render() {
 		);
 		applyRenderSetting(targetRenderQueueItem);
 		targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-		pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName)!;
+		pngFile = applyTargetTemplate(
+			targetOutputModule,
+			targetTemplateName,
+			'.png'
+		)!;
 		renderFolder = pngFile.parent;
 	}
 	if (TGA_Checkbox.value) {
@@ -712,7 +717,11 @@ function render() {
 		);
 		applyRenderSetting(targetRenderQueueItem);
 		targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-		tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName)!;
+		tgaFile = applyTargetTemplate(
+			targetOutputModule,
+			targetTemplateName,
+			'.tga'
+		)!;
 		renderFolder = tgaFile.parent;
 	}
 	if (PNG_NoAlpha_Checkbox.value) {
@@ -722,7 +731,11 @@ function render() {
 		);
 		applyRenderSetting(targetRenderQueueItem);
 		targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-		pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName)!;
+		pngFile = applyTargetTemplate(
+			targetOutputModule,
+			targetTemplateName,
+			'.png'
+		)!;
 		renderFolder = pngFile.parent;
 	}
 	if (TGA_NoAlpha_Checkbox.value) {
@@ -732,7 +745,11 @@ function render() {
 		);
 		applyRenderSetting(targetRenderQueueItem);
 		targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-		tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName)!;
+		tgaFile = applyTargetTemplate(
+			targetOutputModule,
+			targetTemplateName,
+			'.tga'
+		)!;
 		renderFolder = tgaFile.parent;
 	}
 
@@ -784,7 +801,8 @@ function getFinalCompName(
 
 function applyTargetTemplate(
 	targetOutputModule: OutputModule,
-	targetTemplateName: string
+	targetTemplateName: string,
+	suffix: string
 ) {
 	activeItem = _.getActiveItem();
 	if (!activeItem) return;
@@ -802,11 +820,22 @@ function applyTargetTemplate(
 	}
 	let outputFolderPath =
 		(app.project.file as File).path +
-		'//' +
+		'\\' +
 		(activeItem as CompItem).parentFolder.name;
 	let outputFile = new File(
-		getFolder(outputFolderPath).fsName + '//' + (activeItem as CompItem).name
+		getFolder(outputFolderPath).fsName +
+			'\\' +
+			(activeItem as CompItem).name +
+			suffix
 	);
+	let backupFolder = new Folder(outputFile.parent.fsName + '\\Backup');
+	if (!backupFolder.exists) backupFolder.create();
+	if (outputFile.exists) {
+		let backupFile = new File(backupFolder.fsName + '\\' + outputFile.name);
+		if (backupFile.exists) backupFile.remove();
+		outputFile.copy(backupFile.fsName);
+		outputFile.remove();
+	}
 
 	targetOutputModule.includeSourceXMP = false;
 	targetOutputModule.postRenderAction = PostRenderAction.NONE;
@@ -821,7 +850,7 @@ function applyRenderSetting(renderQueueItem: RenderQueueItem) {
 	var renderSettings = {
 		'Color Depth': 'Current Settings',
 		'Disk Cache': 'Read Only',
-		Effects: 'All On',
+		Effects: 'Current Settings',
 		'Frame Blending': 'On for Checked Layers',
 		'Frame Rate': "Use comp's frame rate",
 		'Motion Blur': 'On for Checked Layers',

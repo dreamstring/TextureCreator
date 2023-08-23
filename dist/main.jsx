@@ -1,4 +1,4 @@
-// 2023/8/22 11:25:54
+// 2023/8/23 16:54:28
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -1225,7 +1225,7 @@
                     alignment: [ "fill", "top" ]
                 },
                 group: {
-                    param: [ "render_group", [ 0, -6, 50, 22 ] ],
+                    param: [ "render_group", [ 0, -6, 200, 22 ] ],
                     style: {
                         orientation: "stack",
                         alignment: [ "left", "top" ]
@@ -1361,6 +1361,7 @@
     }
     function createComp() {
         setUndoGroup("Create comp", function() {
+            activeItem = getActiveItem();
             var categoryFolderIndex = textureName_dropDownList.selection.index;
             var categoryFolderName = textureNameArray[categoryFolderIndex];
             var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
@@ -1381,9 +1382,8 @@
             }
             var nameArray = activeItem.name.split("_");
             var compName = nameArray[1];
-            var compSize = nameArray[nameArray.length - 2];
-            var compWidth = toNumber(compSize.split("x")[0]);
-            var compHeight = toNumber(compSize.split("x")[1]);
+            var compWidth = activeItem.width;
+            var compHeight = activeItem.height;
             var originComp = activeItem;
             var parentFolder = originComp.parentFolder;
             var finalCompName = getFinalCompName(compName, realSize_Checkbox.value ? realWidth_Edittext.text : compWidth, realSize_Checkbox.value ? realHeight_Edittext.text : compHeight, parentFolder);
@@ -1547,7 +1547,7 @@
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
             applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-            pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName, ".png");
             renderFolder = pngFile.parent;
         }
         if (TGA_Checkbox.value) {
@@ -1555,7 +1555,7 @@
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
             applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-            tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName, ".tga");
             renderFolder = tgaFile.parent;
         }
         if (PNG_NoAlpha_Checkbox.value) {
@@ -1563,7 +1563,7 @@
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
             applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-            pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            pngFile = applyTargetTemplate(targetOutputModule, targetTemplateName, ".png");
             renderFolder = pngFile.parent;
         }
         if (TGA_NoAlpha_Checkbox.value) {
@@ -1571,7 +1571,7 @@
             var targetOutputModule = targetRenderQueueItem.outputModule(numOutputModules++);
             applyRenderSetting(targetRenderQueueItem);
             targetRenderQueueItem.logType = LogType.ERRORS_AND_PER_FRAME_INFO;
-            tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName);
+            tgaFile = applyTargetTemplate(targetOutputModule, targetTemplateName, ".tga");
             renderFolder = tgaFile.parent;
         }
         startRender();
@@ -1604,7 +1604,7 @@
         });
         return getTargetCompName(compName, compWidth, compHeight, dataLeftCompleting(compIndex, toNumber(digits_Scrollbar.value.toFixed(0))));
     }
-    function applyTargetTemplate(targetOutputModule, targetTemplateName) {
+    function applyTargetTemplate(targetOutputModule, targetTemplateName, suffix) {
         activeItem = getActiveItem();
         if (!activeItem) {
             return;
@@ -1625,8 +1625,20 @@
                 app.executeCommand(2150);
             });
         }
-        var outputFolderPath = app.project.file.path + "//" + activeItem.parentFolder.name;
-        var outputFile = new File(getFolder(outputFolderPath).fsName + "//" + activeItem.name);
+        var outputFolderPath = app.project.file.path + "\\" + activeItem.parentFolder.name;
+        var outputFile = new File(getFolder(outputFolderPath).fsName + "\\" + activeItem.name + suffix);
+        var backupFolder = new Folder(outputFile.parent.fsName + "\\Backup");
+        if (!backupFolder.exists) {
+            backupFolder.create();
+        }
+        if (outputFile.exists) {
+            var backupFile = new File(backupFolder.fsName + "\\" + outputFile.name);
+            if (backupFile.exists) {
+                backupFile.remove();
+            }
+            outputFile.copy(backupFile.fsName);
+            outputFile.remove();
+        }
         targetOutputModule.includeSourceXMP = false;
         targetOutputModule.postRenderAction = PostRenderAction.NONE;
         return targetOutputModule.file = outputFile;
@@ -1641,7 +1653,7 @@
         var renderSettings = {
             "Color Depth": "Current Settings",
             "Disk Cache": "Read Only",
-            Effects: "All On",
+            Effects: "Current Settings",
             "Frame Blending": "On for Checked Layers",
             "Frame Rate": "Use comp's frame rate",
             "Motion Blur": "On for Checked Layers",
