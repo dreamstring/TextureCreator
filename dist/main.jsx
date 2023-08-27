@@ -1,4 +1,4 @@
-// 2023/8/23 16:54:28
+// 2023/8/27 20:02:15
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -1028,7 +1028,7 @@
                                 alignment: [ "left", "center" ],
                                 value: false
                             },
-                            param: [ "realSize_Checkbox", undefined, "Realsize" ]
+                            param: [ "realSize_Checkbox", [ 0, 0, 70, 22 ], "Realsize: " ]
                         }
                     }
                 },
@@ -1221,56 +1221,82 @@
                 margins: 0,
                 spacing: 0,
                 style: {
-                    orientation: "row",
+                    orientation: "column",
                     alignment: [ "fill", "top" ]
                 },
-                group: {
-                    param: [ "render_group", [ 0, -6, 200, 22 ] ],
+                group1: {
                     style: {
                         orientation: "stack",
-                        alignment: [ "left", "top" ]
+                        alignment: [ "left", "top" ],
+                        bounds: [ 0, 0, 50, 30 ]
+                    },
+                    checkbox: {
+                        style: {
+                            alignment: [ "left", "bottom" ],
+                            value: true
+                        },
+                        param: [ "OpenFolder_Checkbox", undefined, "Open the texture folder after rendering." ]
+                    }
+                },
+                group2: {
+                    style: {
+                        orientation: "row",
+                        alignment: [ "fill", "top" ]
                     },
                     group: {
                         style: {
-                            orientation: "row",
-                            alignment: [ "left", "center" ]
+                            orientation: "stack",
+                            alignment: [ "left", "top" ]
                         },
-                        checkbox1: {
+                        group: {
+                            param: [ "renderCheckbox_group", [ 0, -6, 300, 22 ] ],
                             style: {
-                                alignment: [ "left", "center" ],
-                                value: false
+                                orientation: "row",
+                                alignment: [ "fill", "top" ]
                             },
-                            param: [ "PNG_Checkbox", undefined, "PNG" ]
-                        },
-                        checkbox2: {
-                            style: {
-                                alignment: [ "left", "center" ],
-                                value: true
-                            },
-                            param: [ "TGA_Checkbox", undefined, "TGA" ]
-                        },
-                        checkbox3: {
-                            style: {
-                                alignment: [ "left", "center" ],
-                                value: false
-                            },
-                            param: [ "PNG_NoAlpha_Checkbox", undefined, "PNG(NoAlpha)" ]
-                        },
-                        checkbox4: {
-                            style: {
-                                alignment: [ "left", "center" ],
-                                value: false
-                            },
-                            param: [ "TGA_NoAlpha_Checkbox", undefined, "TGA(NoAlpha)" ]
+                            group: {
+                                style: {
+                                    orientation: "row",
+                                    alignment: [ "fill", "center" ]
+                                },
+                                checkbox1: {
+                                    style: {
+                                        alignment: [ "left", "center" ],
+                                        value: false
+                                    },
+                                    param: [ "PNG_Checkbox", undefined, "PNG" ]
+                                },
+                                checkbox2: {
+                                    style: {
+                                        alignment: [ "left", "center" ],
+                                        value: false
+                                    },
+                                    param: [ "PNG_NoAlpha_Checkbox", undefined, "PNG(NoAlpha)" ]
+                                },
+                                checkbox3: {
+                                    style: {
+                                        alignment: [ "left", "center" ],
+                                        value: true
+                                    },
+                                    param: [ "TGA_Checkbox", undefined, "TGA" ]
+                                },
+                                checkbox4: {
+                                    style: {
+                                        alignment: [ "left", "center" ],
+                                        value: false
+                                    },
+                                    param: [ "TGA_NoAlpha_Checkbox", undefined, "TGA(NoAlpha)" ]
+                                }
+                            }
                         }
-                    }
-                },
-                button: {
-                    style: {
-                        alignment: [ "fill", "top" ],
-                        onClick: render
                     },
-                    param: [ "Rrender", [ 0, 0, 22, globalHeight ], "Render" ]
+                    button: {
+                        style: {
+                            alignment: [ "fill", "top" ],
+                            onClick: render
+                        },
+                        param: [ "Render", [ 0, 0, 22, globalHeight ], "Render" ]
+                    }
                 }
             }
         }
@@ -1286,6 +1312,7 @@
     var realSize_Checkbox = elements.getElementById("realSize_Checkbox");
     var realWidth_Edittext = elements.getElementById("realWidth_Edittext");
     var realHeight_Edittext = elements.getElementById("realHeight_Edittext");
+    var OpenFolder_Checkbox = elements.getElementById("OpenFolder_Checkbox");
     var PNG_Checkbox = elements.getElementById("PNG_Checkbox");
     var TGA_Checkbox = elements.getElementById("TGA_Checkbox");
     var PNG_NoAlpha_Checkbox = elements.getElementById("PNG_NoAlpha_Checkbox");
@@ -1362,6 +1389,8 @@
     function createComp() {
         setUndoGroup("Create comp", function() {
             activeItem = getActiveItem();
+            items = app.project.items;
+            rootFolder = app.project.rootFolder;
             var categoryFolderIndex = textureName_dropDownList.selection.index;
             var categoryFolderName = textureNameArray[categoryFolderIndex];
             var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
@@ -1442,22 +1471,22 @@
         return targetComp.layers.addSolid(color, name, toNumber(compWidth), toNumber(compHeight), 1);
     }
     function createBlackBg() {
-        setUndoGroup("Create Balck Background", function() {
+        setUndoGroup("Create Black Background", function() {
             createTargetColorBg([ 0, 0, 0 ], "Black");
         });
     }
     function createWhiteBg() {
-        setUndoGroup("Create Balck Background", function() {
+        setUndoGroup("Create Black Background", function() {
             createTargetColorBg([ 1, 1, 1 ], "White");
         });
     }
     function createGreyBg() {
-        setUndoGroup("Create Balck Background", function() {
+        setUndoGroup("Create Black Background", function() {
             createTargetColorBg([ 0.5, 0.5, 0.5 ], "Grey");
         });
     }
     function createNoBg() {
-        setUndoGroup("Create Balck Background", function() {
+        setUndoGroup("Create Black Background", function() {
             createTargetColorBg([ 1, 1, 1 ], "None");
         });
     }
@@ -1582,6 +1611,9 @@
                     fixRenderFile(file);
                 }
             });
+        }
+        if (OpenFolder_Checkbox.value) {
+            File(renderFolder.fsName).execute();
         }
     }
     function getTargetCompName(compName, compWidth, compHeight, index) {
