@@ -9,5 +9,28 @@
     },
     "hide-files.files": [],
     "editor.formatOnSave": true,
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cSpell.words": [
+        "bulid",
+        "customizer",
+        "dockable",
+        "dropdownlist",
+        "edittext",
+        "iconbutton",
+        "outro",
+        "Realsize",
+        "statictext",
+        "Statictext",
+        "tabbedpanel",
+        "treeshake"
+    ],
+    "cSpell.ignoreWords": [
+        "ABDEFGHIKNOPQRSUV",
+        "ABDEHIKOPQRSV",
+        "CGMNTW",
+        "DGKLNTUV",
+        "DKLV",
+        "DKUV",
+        "GNTU",
+    ]
 }

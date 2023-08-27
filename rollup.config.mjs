@@ -24,6 +24,25 @@ export default {
                 }),
             ],
         },
+        {
+            file: "Texture Creator.jsx",
+            intro: "(function () {",
+            outro: "}).call(this);",
+            plugins: [
+                terser({
+                    compress: false,
+                    mangle: false,
+                    format: {
+                        beautify: true,
+                        braces: true,
+                        comments: false,
+                        keep_quoted_props: true,
+                        keep_numbers: true,
+                        wrap_func_args: false,
+                    },
+                }),
+            ],
+        },
         // {
         //     file: "dist/soil.min.jsx",
         //     intro: "(function () {",
