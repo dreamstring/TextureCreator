@@ -4,8 +4,8 @@
     var textureName = function (compName, compWidth, compHeight, index) {
         return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
     };
-    var textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
 
+    var textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
     var hasOwnProperty = objectProto.hasOwnProperty;
@@ -922,7 +922,6 @@
         func();
         app.endUndoGroup();
     }
-
     var globalHeight = 22;
     var UISource = {
         style: {
@@ -1547,6 +1546,7 @@
         permissionDialog();
         protectiveSave();
         activeItem = getActiveItem();
+        renderQueueItems = app.project.renderQueue.items;
         if (!activeItem) {
             return;
         }

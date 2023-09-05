@@ -591,6 +591,8 @@ function render() {
 	permissionDialog();
 	protectiveSave();
 	activeItem = _.getActiveItem();
+	renderQueueItems = app.project.renderQueue.items;
+
 	if (!activeItem) return;
 	if (activeItem && (PNG_Checkbox.value || TGA_Checkbox.value || PNG_NoAlpha_Checkbox.value || TGA_NoAlpha_Checkbox.value))
 		renderQueueItems.add(activeItem as CompItem);

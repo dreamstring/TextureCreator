@@ -1,4 +1,4 @@
-// 2023/8/27 20:04:18
+// 2023/9/5 15:45:51
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -1546,6 +1546,7 @@
         permissionDialog();
         protectiveSave();
         activeItem = getActiveItem();
+        renderQueueItems = app.project.renderQueue.items;
         if (!activeItem) {
             return;
         }
