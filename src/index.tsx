@@ -1,9 +1,10 @@
 import * as _ from 'soil-ts';
 
 const textureSizeArray: number[] = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-const textureNameArray: string[] = ['Glow', 'Light', 'Flare', 'Spark', 'Trail', 'Mask', 'Noise', 'Turbulence', 'Element', 'Sequence'];
+const textureNameArray: string[] = ['Glow', 'Light', 'Flare', 'Logo', 'Trail', 'Mask', 'Noise', 'Turbulence', 'Element', 'Sequence'];
+const customName = 'T_DX';
 const textureName = (compName: string, compWidth: string | number, compHeight: string | number, index: string | number) => {
-	return `T_${compName}_${compWidth}x${compHeight}_${index}`;
+	return `${customName}_${compName}_${compWidth}x${compHeight}_${index}`;
 };
 const textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
 const globalHeight = 22;
@@ -21,7 +22,7 @@ let UISource = {
 		style: {
 			orientation: 'stack',
 			alignment: ['fill', 'top'],
-			bounds: [0, 0, 50, 114],
+			bounds: [0, 0, 300, 114],
 			text: 'Texture Parameters'
 		},
 		group1: {
@@ -392,6 +393,15 @@ function existCategoryFolder(folder: FolderItem, inputName: string) {
 	return result;
 }
 
+function createBaseFunc(undoString: string, callback: (activeItem: CompItem) => any) {
+	return function () {
+		_.setUndoGroup(undoString, () => {
+			const activeItem = _.getActiveItem();
+			if (_.isCompItem(activeItem)) callback(activeItem);
+		});
+	};
+}
+
 function getCategoryFolder(parentFolderName: string) {
 	let targetFolder = existCategoryFolder(rootFolder, parentFolderName);
 	return targetFolder.exist ? targetFolder.folder : items.addFolder(parentFolderName);
@@ -446,7 +456,7 @@ function duplicateComp() {
 		activeItem = _.getActiveItem();
 		if (!activeItem) return;
 		let nameArray = (activeItem as CompItem).name.split('_');
-		let compName = nameArray[1];
+		let compName = (activeItem as CompItem).name.slice(0, customName.length);
 		let compSize = nameArray[nameArray.length - 2];
 		let compWidth = (activeItem as CompItem).width;
 		let compHeight = (activeItem as CompItem).height;
@@ -468,9 +478,7 @@ function duplicateComp() {
 }
 
 function changeComp() {
-	_.setUndoGroup('Change comp', () => {
-		activeItem = _.getActiveItem();
-		if (!activeItem) return;
+	createBaseFunc('Change comp', activeItem => {
 		let categoryFolderIndex = (textureName_dropDownList.selection as ListItem).index;
 		let categoryFolderName = textureNameArray[categoryFolderIndex];
 		let compWidth = textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];

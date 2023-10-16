@@ -1,4 +1,4 @@
-// 2023/9/5 15:45:51
+// 2023/10/16 10:25:18
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -917,9 +917,10 @@
         app.endUndoGroup();
     }
     var textureSizeArray = [ 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
-    var textureNameArray = [ "Glow", "Light", "Flare", "Spark", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence" ];
+    var textureNameArray = [ "Glow", "Light", "Flare", "Logo", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence" ];
+    var customName = "T_DX";
     var textureName = function(compName, compWidth, compHeight, index) {
-        return "T_".concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
+        return "".concat(customName, "_").concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
     };
     var textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
     var globalHeight = 22;
@@ -936,7 +937,7 @@
             style: {
                 orientation: "stack",
                 alignment: [ "fill", "top" ],
-                bounds: [ 0, 0, 50, 114 ],
+                bounds: [ 0, 0, 300, 114 ],
                 text: "Texture Parameters"
             },
             group1: {
@@ -1409,8 +1410,8 @@
             if (!activeItem) {
                 return;
             }
-            var nameArray = activeItem.name.split("_");
-            var compName = nameArray[1];
+            activeItem.name.split("_");
+            var compName = activeItem.name.slice(0, customName.length);
             var compWidth = activeItem.width;
             var compHeight = activeItem.height;
             var originComp = activeItem;
@@ -1424,49 +1425,7 @@
             targetComp.openInViewer();
         });
     }
-    function changeComp() {
-        setUndoGroup("Change comp", function() {
-            activeItem = getActiveItem();
-            if (!activeItem) {
-                return;
-            }
-            var categoryFolderIndex = textureName_dropDownList.selection.index;
-            var categoryFolderName = textureNameArray[categoryFolderIndex];
-            var compWidth = textureSizeArray[textureWidth_dropDownList.selection.index];
-            var compHeight = textureSizeArray[textureHeight_dropDownList.selection.index];
-            var parentFolderName = dataLeftCompleting(categoryFolderIndex, 2) + " " + categoryFolderName;
-            var targetComp = activeItem;
-            var parentFolder = getCategoryFolder(parentFolderName);
-            var finalCompName = getFinalCompName(categoryFolderName, realSize_Checkbox.value ? realWidth_Edittext.text : compWidth, realSize_Checkbox.value ? realHeight_Edittext.text : compHeight, parentFolder);
-            targetComp.width = compWidth;
-            targetComp.height = compHeight;
-            targetComp.name = finalCompName;
-            targetComp.parentFolder = parentFolder;
-            targetComp.openInViewer();
-            var existBg = false;
-            var bgComment = "TextureBackGround";
-            var bgColor = [ 1, 1, 1 ];
-            var bgColorName = "None";
-            eachLayers(targetComp, function(layer) {
-                if (layer.comment == bgComment) {
-                    existBg = true;
-                    layer.locked = false;
-                    bgColorName = layer.name.split(" ")[1];
-                    layer.remove();
-                }
-            });
-            if (!existBg) {
-                return;
-            }
-            if (bgColorName == "Black") {
-                bgColor = [ 0, 0, 0 ];
-            }
-            if (bgColorName == "White") {
-                bgColor = [ 1, 1, 1 ];
-            }
-            createTargetColorBg(bgColor, bgColorName);
-        });
-    }
+    function changeComp() {}
     function createBg(targetComp, compWidth, compHeight, color, name) {
         return targetComp.layers.addSolid(color, name, toNumber(compWidth), toNumber(compHeight), 1);
     }
