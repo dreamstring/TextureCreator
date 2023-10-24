@@ -6,7 +6,7 @@ const customName = 'T_DX';
 const textureName = (compName: string, compWidth: string | number, compHeight: string | number, index: string | number) => {
 	return `${customName}_${compName}_${compWidth}x${compHeight}_${index}`;
 };
-const textureRegex = /^T_[a-zA-Z]+_\d+x\d+_\d+$/;
+const textureRegex = new RegExp('^' + customName + '_[a-zA-Z]+_\\d+x\\d+_\\d+$');
 const globalHeight = 22;
 
 let UISource = {
@@ -393,15 +393,6 @@ function existCategoryFolder(folder: FolderItem, inputName: string) {
 	return result;
 }
 
-function createBaseFunc(undoString: string, callback: (activeItem: CompItem) => any) {
-	return function () {
-		_.setUndoGroup(undoString, () => {
-			const activeItem = _.getActiveItem();
-			if (_.isCompItem(activeItem)) callback(activeItem);
-		});
-	};
-}
-
 function getCategoryFolder(parentFolderName: string) {
 	let targetFolder = existCategoryFolder(rootFolder, parentFolderName);
 	return targetFolder.exist ? targetFolder.folder : items.addFolder(parentFolderName);
@@ -455,8 +446,8 @@ function duplicateComp() {
 	_.setUndoGroup('Duplicate comp', () => {
 		activeItem = _.getActiveItem();
 		if (!activeItem) return;
-		let nameArray = (activeItem as CompItem).name.split('_');
-		let compName = (activeItem as CompItem).name.slice(0, customName.length);
+		let nameArray = (activeItem as CompItem).name.substring(customName.length).split('_');
+		let compName = nameArray[1];
 		let compSize = nameArray[nameArray.length - 2];
 		let compWidth = (activeItem as CompItem).width;
 		let compHeight = (activeItem as CompItem).height;
@@ -478,7 +469,8 @@ function duplicateComp() {
 }
 
 function changeComp() {
-	createBaseFunc('Change comp', activeItem => {
+	_.setUndoGroup('Change comp', () => {
+		activeItem = _.getActiveItem();
 		let categoryFolderIndex = (textureName_dropDownList.selection as ListItem).index;
 		let categoryFolderName = textureNameArray[categoryFolderIndex];
 		let compWidth = textureSizeArray[(textureWidth_dropDownList.selection as ListItem).index];
