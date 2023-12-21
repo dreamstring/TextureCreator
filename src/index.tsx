@@ -2,7 +2,7 @@ import * as _ from 'soil-ts';
 
 const textureSizeArray: number[] = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const textureNameArray: string[] = ['Glow', 'Light', 'Flare', 'Logo', 'Trail', 'Mask', 'Noise', 'Turbulence', 'Element', 'Sequence'];
-const customName = 'T_DX';
+const customName = 'T_';
 const textureName = (compName: string, compWidth: string | number, compHeight: string | number, index: string | number) => {
 	return `${customName}_${compName}_${compWidth}x${compHeight}_${index}`;
 };

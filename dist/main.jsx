@@ -1,4 +1,4 @@
-// 2023/10/24 15:13:58
+// 2023/12/21 11:18:33
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -918,7 +918,7 @@
     }
     var textureSizeArray = [ 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
     var textureNameArray = [ "Glow", "Light", "Flare", "Logo", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence" ];
-    var customName = "T_DX";
+    var customName = "T_";
     var textureName = function(compName, compWidth, compHeight, index) {
         return "".concat(customName, "_").concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
     };
