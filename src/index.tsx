@@ -2,11 +2,11 @@ import * as _ from 'soil-ts';
 
 const textureSizeArray: number[] = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const textureNameArray: string[] = ['Glow', 'Light', 'Flare', 'Logo', 'Trail', 'Mask', 'Noise', 'Turbulence', 'Element', 'Sequence'];
-const customName = 'T_';
+let customName = 'T_UI';
 const textureName = (compName: string, compWidth: string | number, compHeight: string | number, index: string | number) => {
 	return `${customName}_${compName}_${compWidth}x${compHeight}_${index}`;
 };
-const textureRegex = new RegExp('^' + customName + '_[a-zA-Z]+_\\d+x\\d+_\\d+$');
+let textureRegex = new RegExp('^' + customName + '_[a-zA-Z]+_\\d+x\\d+_\\d+$');
 const globalHeight = 22;
 
 let UISource = {
@@ -16,13 +16,118 @@ let UISource = {
 		orientation: 'column',
 		alignment: ['fill', 'fill']
 	},
+	panel0: {
+		margins: 0,
+		spacing: 0,
+		style: {
+			orientation: 'column',
+			alignment: ['fill', 'top'],
+			text: 'Custom Name'
+		},
+		group1: {
+			style: {
+				orientation: 'row',
+				alignment: ['fill', 'center']
+			},
+			group1: {
+				style: {
+					orientation: 'stack',
+					alignment: ['left', 'top']
+				},
+				group: {
+					param: ['realSize_group', [0, -6, 90, 22]],
+					style: {
+						orientation: 'stack',
+						alignment: ['left', 'top']
+					},
+					checkbox: {
+						style: {alignment: ['left', 'center'], value: false},
+						param: ['customPrefix_Checkbox', [0, 0, 100, globalHeight], 'Custom Prefix:']
+					}
+				}
+			},
+			group2: {
+				style: {
+					orientation: 'stack',
+					alignment: ['fill', 'top']
+				},
+				group1: {
+					style: {
+						margins: 0,
+						spacing: 20,
+						orientation: 'row',
+						alignment: ['fill', 'center']
+					},
+					param: ['customPrefix', [0, 0, 200, globalHeight]],
+					edittext: {
+						style: {alignment: ['fill', 'center'], enable: true},
+						param: ['customName_Edittext', [0, 0, 100, globalHeight], customName]
+					},
+					button: {
+						style: {
+							alignment: ['right', 'center'],
+							onClick: refreshCustomPrefix
+						},
+						param: [undefined, [0, 0, 22, globalHeight], '↺']
+					}
+				}
+			}
+		},
+		group2: {
+			style: {
+				orientation: 'stack',
+				alignment: ['fill', 'bottom'],
+				bounds: [0, 0, 50, 26]
+			},
+			group3: {
+				param: ['textureName_group'],
+				margins: 0,
+				spacing: 0,
+				style: {
+					orientation: 'row',
+					alignment: ['fill', 'top']
+				},
+				group1: {
+					margins: 0,
+					spacing: 0,
+					style: {
+						orientation: 'row',
+						alignment: ['fill', 'top']
+					},
+					statictext: {
+						style: {alignment: ['left', 'center']},
+						param: [undefined, [0, 0, 36, globalHeight], 'Name: ']
+					},
+					dropDownList: {
+						style: {alignment: ['fill', 'fill'], selection: 0},
+						param: ['textureName_dropDownList', [0, 0, 75, globalHeight], textureNameArray]
+					}
+				},
+				statictext: {
+					style: {alignment: ['right', 'center']},
+					param: ['digits_Statictext', [0, 0, 46, globalHeight], 'Digits: 2']
+				},
+				scrollbar: {
+					style: {alignment: ['right', 'center'], selection: 0},
+					param: ['digits_Scrollbar', [0, 0, 120, 10], 2, 0, 6]
+				},
+				button: {
+					style: {
+						alignment: ['right', 'center'],
+						onClick: refreshScrollbar
+					},
+					param: [undefined, [0, 0, 22, globalHeight], '↺']
+				}
+			}
+		}
+	},
 	panel1: {
 		margins: 0,
 		spacing: 0,
 		style: {
-			orientation: 'stack',
+			orientation: 'column',
 			alignment: ['fill', 'top'],
-			bounds: [0, 0, 300, 114],
+			// bounds: [0, 0, 300, 114],
 			text: 'Texture Parameters'
 		},
 		group1: {
@@ -86,10 +191,10 @@ let UISource = {
 			style: {
 				orientation: 'row',
 				alignment: ['fill', 'bottom'],
-				bounds: [0, -28, 50, 26]
+				bounds: [0, 0, 50, 26]
 			},
 			group1: {
-				param: ['realSize_group', [0, -6, 50, 22]],
+				param: ['realSize_group', [0, -6, 66, 22]],
 				style: {
 					orientation: 'stack',
 					alignment: ['left', 'top']
@@ -101,7 +206,7 @@ let UISource = {
 					},
 					checkbox: {
 						style: {alignment: ['left', 'center'], value: false},
-						param: ['realSize_Checkbox', [0, 0, 70, 22], 'Realsize: ']
+						param: ['realSize_Checkbox', [0, 0, 100, 22], 'Realsize: ']
 					}
 				}
 			},
@@ -144,53 +249,6 @@ let UISource = {
 					onClick: refreshRealSize
 				},
 				param: [undefined, [0, 0, 22, globalHeight], '↺']
-			}
-		},
-		group3: {
-			style: {
-				orientation: 'stack',
-				alignment: ['fill', 'bottom'],
-				bounds: [0, 0, 50, 26]
-			},
-			group3: {
-				param: ['textureName_group'],
-				margins: 0,
-				spacing: 0,
-				style: {
-					orientation: 'row',
-					alignment: ['fill', 'top']
-				},
-				group1: {
-					margins: 0,
-					spacing: 0,
-					style: {
-						orientation: 'row',
-						alignment: ['fill', 'top']
-					},
-					statictext: {
-						style: {alignment: ['left', 'center']},
-						param: [undefined, [0, 0, 36, globalHeight], 'Name: ']
-					},
-					dropDownList: {
-						style: {alignment: ['fill', 'fill'], selection: 0},
-						param: ['textureName_dropDownList', [0, 0, 75, globalHeight], textureNameArray]
-					}
-				},
-				statictext: {
-					style: {alignment: ['right', 'center']},
-					param: ['digits_Statictext', [0, 0, 46, globalHeight], 'Digits: 2']
-				},
-				scrollbar: {
-					style: {alignment: ['right', 'center'], selection: 0},
-					param: ['digits_Scrollbar', [0, 0, 120, 10], 2, 0, 6]
-				},
-				button: {
-					style: {
-						alignment: ['right', 'center'],
-						onClick: refreshScrollbar
-					},
-					param: [undefined, [0, 0, 22, globalHeight], '↺']
-				}
 			}
 		}
 	},
@@ -351,6 +409,35 @@ let PNG_NoAlpha_Checkbox = elements.getElementById('PNG_NoAlpha_Checkbox') as un
 let TGA_NoAlpha_Checkbox = elements.getElementById('TGA_NoAlpha_Checkbox') as unknown as Checkbox;
 let digits_Statictext = elements.getElementById('digits_Statictext') as unknown as StaticText;
 let digits_Scrollbar = elements.getElementById('digits_Scrollbar') as unknown as Scrollbar;
+
+let customName_Edittext = elements.getElementById('customName_Edittext') as unknown as EditText;
+let customPrefix_Checkbox = elements.getElementById('customPrefix_Checkbox') as unknown as Checkbox;
+
+customName_Edittext.enabled = customPrefix_Checkbox.value;
+customPrefix_Checkbox.onClick = () => {
+	customName_Edittext.enabled = customPrefix_Checkbox.value;
+	if (!customPrefix_Checkbox.value) {
+		customName = 'T_UI';
+	} else {
+		customName = customName_Edittext.text;
+	}
+	textureRegex = new RegExp('^' + customName + '_[a-zA-Z]+_\\d+x\\d+_\\d+$');
+};
+
+function refreshCustomPrefix() {
+	if (customPrefix_Checkbox.value) {
+		customName_Edittext.text = 'T_UI';
+		customName = 'T_UI';
+		textureRegex = new RegExp('^' + customName + '_[a-zA-Z]+_\\d+x\\d+_\\d+$');
+	}
+}
+
+customName_Edittext.onChange = () => {
+	if (customPrefix_Checkbox.value) {
+		customName = customName_Edittext.text;
+		textureRegex = new RegExp('^' + customName + '_[a-zA-Z]+_\\d+x\\d+_\\d+$');
+	}
+};
 
 realWidth_Edittext.enabled = realHeight_Edittext.enabled = false;
 digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;

@@ -1,8 +1,8 @@
-(function () {
-    var textureSizeArray = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-    var textureNameArray = ["Glow", "Light", "Flare", "Logo", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence"];
-    var customName = "T_";
-    var textureName = function (compName, compWidth, compHeight, index) {
+(function() {
+    var textureSizeArray = [ 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 ];
+    var textureNameArray = [ "Glow", "Light", "Flare", "Logo", "Trail", "Mask", "Noise", "Turbulence", "Element", "Sequence" ];
+    var customName = "T_UI";
+    var textureName = function(compName, compWidth, compHeight, index) {
         return "".concat(customName, "_").concat(compName, "_").concat(compWidth, "x").concat(compHeight, "_").concat(index);
     };
     var textureRegex = new RegExp("^" + customName + "_[a-zA-Z]+_\\d+x\\d+_\\d+$");
@@ -142,7 +142,7 @@
             return value;
         }
         if (isArray(value)) {
-            return "".concat(map(value, function (other) {
+            return "".concat(map(value, function(other) {
                 return other == null ? other : toString(other);
             }));
         }
@@ -235,16 +235,16 @@
     function initCloneByTag(object, tag) {
         var Ctor = object.constructor;
         switch (tag) {
-            case boolTag:
-            case dateTag:
-                return new Ctor(object.valueOf());
+          case boolTag:
+          case dateTag:
+            return new Ctor(object.valueOf());
 
-            case numberTag:
-            case stringTag:
-                return new Ctor(object);
+          case numberTag:
+          case stringTag:
+            return new Ctor(object);
 
-            case regexpTag:
-                return cloneRegExp(object);
+          case regexpTag:
+            return cloneRegExp(object);
         }
     }
     function isRegExpExecArray(array) {
@@ -300,11 +300,11 @@
         stackA.push(value);
         stackB.push(result);
         if (isArr) {
-            arrayEach(value, function (subValue, key) {
+            arrayEach(value, function(subValue, key) {
                 result[key] = baseClone(subValue, isDeep, customizer, key, value, stackA, stackB);
             });
         } else {
-            baseForOwn(value, function (subValue, key) {
+            baseForOwn(value, function(subValue, key) {
                 result[key] = baseClone(subValue, isDeep, customizer, key, value, stackA, stackB);
             });
         }
@@ -439,7 +439,7 @@
         return array != null && array.length ? baseUniq(array) : [];
     }
     function createIsNativeType(nativeObject) {
-        return function (value) {
+        return function(value) {
             return value != null && value instanceof nativeObject;
         };
     }
@@ -452,8 +452,8 @@
         parse: runInContext,
         windows: []
     };
-    var layoutModeFlags = [0, 1, 2];
-    var validContainerType = ["dialog", "palette", "window"];
+    var layoutModeFlags = [ 0, 1, 2 ];
+    var validContainerType = [ "dialog", "palette", "window" ];
     var mainContainerDefault = {
         dockable: true,
         show: true,
@@ -532,7 +532,7 @@
         return nativeAddControl(container, flag, assignElementParam(value, flag));
     }
     function addGetElementMethods(constructors) {
-        forEach(constructors, function (constructor) {
+        forEach(constructors, function(constructor) {
             var prototype = constructor.prototype;
             prototype.getElementById = getElementById;
             prototype.getElementsByName = getElementsByName;
@@ -594,7 +594,7 @@
     }
     function assignWindowType(param) {
         var type = String(param[0]);
-        param[0] = contains(validContainerType, type) ? type : ["palette"];
+        param[0] = contains(validContainerType, type) ? type : [ "palette" ];
         return param;
     }
     function baseGet(object, key) {
@@ -628,7 +628,7 @@
     }
     function buildSingletonWindow(resource, context, showWindow, layoutMode) {
         var container;
-        return function () {
+        return function() {
             if (isInvisibleContainer(container)) {
                 container = bulidElements(resource, context);
             }
@@ -655,10 +655,10 @@
         return container;
     }
     function castArray(value) {
-        return isArray(value) ? value : [value];
+        return isArray(value) ? value : [ value ];
     }
     function createIsElementFlag(regex) {
-        return function (flag) {
+        return function(flag) {
             if (has(elementTypeFlags, flag)) {
                 return regex.test(elementTypeFlags[flag]);
             }
@@ -666,9 +666,9 @@
         };
     }
     function baseEachElement(containers, accumulator, breaker, predicate) {
-        return some(containers, function (container) {
+        return some(containers, function(container) {
             var result = [];
-            var isDone = some(container.children, function (element) {
+            var isDone = some(container.children, function(element) {
                 if (isNativeContainer(element.type)) {
                     result.push(element);
                 }
@@ -681,7 +681,7 @@
         });
     }
     function expandTreeViewNodes(nodes) {
-        forEach(nodes, function (node) {
+        forEach(nodes, function(node) {
             node.expanded = true;
         });
     }
@@ -689,7 +689,7 @@
         return uniq(map(nativeConcat.apply([], input), String));
     }
     function freezeProperty(object, property) {
-        object.watch(property, function (name, oldValue) {
+        object.watch(property, function(name, oldValue) {
             return oldValue;
         });
     }
@@ -705,10 +705,10 @@
     function getElementById(targetId) {
         var id = String(targetId);
         var result = [];
-        var breaker = function (accumulator) {
+        var breaker = function(accumulator) {
             return accumulator.length > 0;
         };
-        baseEachElement([this], result, breaker, function (element) {
+        baseEachElement([ this ], result, breaker, function(element) {
             var elementId = baseGetElementId(element);
             if (isNil(elementId)) {
                 return false;
@@ -727,10 +727,10 @@
         var targetNames = filterFindElementInput(arguments);
         var seen = [];
         var result = [];
-        var breaker = function () {
+        var breaker = function() {
             return targetNames.length === seen.length;
         };
-        baseEachElement([this], result, breaker, function (element) {
+        baseEachElement([ this ], result, breaker, function(element) {
             var elementId = baseGetElementId(element);
             if (isNil(elementId)) {
                 return false;
@@ -746,7 +746,7 @@
     function getElementsByType() {
         var targetTypes = filterFindElementInput(arguments);
         var result = [];
-        baseEachElement([this], result, stubFalse, function (element) {
+        baseEachElement([ this ], result, stubFalse, function(element) {
             return contains(targetTypes, element.type);
         });
         return result.length === 0 ? null : result;
@@ -765,7 +765,7 @@
         var isSingletonWindow = Boolean(config.singleton);
         var context = assignContext(parserSelf.context, dockable, isSingletonWindow);
         var layoutMode = assignLayoutMode(parserSelf.layoutMode, config.layoutMode);
-        return [isSingletonWindow, resource, context, showWindow, layoutMode];
+        return [ isSingletonWindow, resource, context, showWindow, layoutMode ];
     }
     function initLayout(container, layoutMode) {
         container.layout.layout(layoutMode);
@@ -773,7 +773,7 @@
     }
     function initMainContainer(resource, context) {
         var mainContainer = getMainContainer(assignWindowType(baseGetParam(resource)), context);
-        mainContainer.onResizing = mainContainer.onResize = function () {
+        mainContainer.onResizing = mainContainer.onResize = function() {
             this.layout.resize();
         };
         assign(mainContainer, baseGetStyle(resource));
@@ -796,7 +796,7 @@
         return has(elementTypeFlags, flag);
     }
     function mapNullToUndefined(array) {
-        return map(array, function (value) {
+        return map(array, function(value) {
             return isNull(value) ? undefined : value;
         });
     }
@@ -813,7 +813,7 @@
         return node.add("item", text);
     }
     function parseElement(resource, container, collector) {
-        forOwn(resource, function (value, key) {
+        forOwn(resource, function(value, key) {
             var flag = trimNumber(key).toLowerCase();
             if (isValidElement(flag) && isValidCombination(container.type, flag)) {
                 if (isContainer(flag)) {
@@ -826,20 +826,20 @@
         });
     }
     function runInContext(resource) {
-        addGetElementMethods([Window, Panel, Group]);
+        addGetElementMethods([ Window, Panel, Group ]);
         var resource_ = isObject(resource) ? resource : {};
         var container = buildWindow.apply(null, initBuildValues(resource_, tree));
         tree.windows.push(container);
         return container;
     }
     function selectChildItem(selectableElementValues) {
-        forEach(selectableElementValues, function (value) {
+        forEach(selectableElementValues, function(value) {
             var container = value.container;
             var itemIndex = value.itemIndex;
             if (isTabbedpanel(container)) {
                 container.selection = itemIndex;
             } else {
-                container.selection = map(castArray(itemIndex), function (value) {
+                container.selection = map(castArray(itemIndex), function(value) {
                     return container.items[value];
                 });
             }
@@ -875,7 +875,7 @@
     }
     function eachFiles(folder, iteratee) {
         var resIndex = 0;
-        forEach(getFiles(folder), function (unknownFile, index, files) {
+        forEach(getFiles(folder), function(unknownFile, index, files) {
             if (isFile(unknownFile)) {
                 if (iteratee(unknownFile, resIndex++, files) === false) {
                     return false;
@@ -884,7 +884,7 @@
         });
     }
     function eachItems(itemCollection, iteratee) {
-        collectionEach(itemCollection.items, function (value, index) {
+        collectionEach(itemCollection.items, function(value, index) {
             if (iteratee(value, index, itemCollection) === false) {
                 return false;
             }
@@ -900,14 +900,14 @@
         return collection;
     }
     function eachLayers(compItem, iteratee) {
-        collectionEach(compItem.layers, function (value, index) {
+        collectionEach(compItem.layers, function(value, index) {
             if (iteratee(value, index, compItem) === false) {
                 return false;
             }
         });
     }
     function eachLayersRight(compItem, iteratee) {
-        collectionEachRight(compItem.layers, function (value, index) {
+        collectionEachRight(compItem.layers, function(value, index) {
             if (iteratee(value, index, compItem) === false) {
                 return false;
             }
@@ -929,284 +929,347 @@
             margins: 5,
             spacing: 5,
             orientation: "column",
-            alignment: ["fill", "fill"]
+            alignment: [ "fill", "fill" ]
         },
-        panel1: {
+        panel0: {
             margins: 0,
             spacing: 0,
             style: {
-                orientation: "stack",
-                alignment: ["fill", "top"],
-                bounds: [0, 0, 300, 114],
-                text: "Texture Parameters"
+                orientation: "column",
+                alignment: [ "fill", "top" ],
+                text: "Custom Name"
             },
             group1: {
-                param: ["textureSize_group"],
-                margins: 0,
-                spacing: 0,
                 style: {
                     orientation: "row",
-                    alignment: ["fill", "top"],
-                    bounds: [0, 0, 50, 26]
-                },
-                statictext: {
-                    style: {
-                        alignment: ["left", "center"]
-                    },
-                    param: [undefined, [0, 0, 26, globalHeight], "Size: "]
-                },
-                group: {
-                    style: {
-                        orientation: "stack",
-                        alignment: ["fill", "center"]
-                    },
-                    group1: {
-                        style: {
-                            margins: 0,
-                            spacing: 20,
-                            orientation: "row",
-                            alignment: ["fill", "center"]
-                        },
-                        param: ["textureSize", [0, 0, 200, globalHeight]],
-                        dropDownList1: {
-                            style: {
-                                alignment: ["fill", "fill"],
-                                selection: 6
-                            },
-                            param: ["textureWidth_dropDownList", [0, 0, 50, globalHeight], textureSizeArray]
-                        },
-                        dropDownList2: {
-                            style: {
-                                alignment: ["fill", "fill"],
-                                selection: 6
-                            },
-                            param: ["textureHeight_dropDownList", [0, 0, 50, globalHeight], textureSizeArray]
-                        }
-                    },
-                    group2: {
-                        style: {
-                            orientation: "row",
-                            alignment: ["center", "center"]
-                        },
-                        statictext1: {
-                            style: {
-                                alignment: ["center", "center"]
-                            },
-                            param: [undefined, [0, 0, 12, globalHeight], " x"]
-                        }
-                    }
-                },
-                button: {
-                    style: {
-                        alignment: ["right", "center"],
-                        onClick: refreshTextureSize
-                    },
-                    param: [undefined, [0, 0, 22, globalHeight], "↺"]
-                }
-            },
-            group2: {
-                param: ["realSize_group"],
-                margins: 0,
-                spacing: 0,
-                style: {
-                    orientation: "row",
-                    alignment: ["fill", "bottom"],
-                    bounds: [0, -28, 50, 26]
+                    alignment: [ "fill", "center" ]
                 },
                 group1: {
-                    param: ["realSize_group", [0, -6, 50, 22]],
                     style: {
                         orientation: "stack",
-                        alignment: ["left", "top"]
+                        alignment: [ "left", "top" ]
                     },
                     group: {
+                        param: [ "realSize_group", [ 0, -6, 90, 22 ] ],
                         style: {
-                            orientation: "row",
-                            alignment: ["left", "center"]
+                            orientation: "stack",
+                            alignment: [ "left", "top" ]
                         },
                         checkbox: {
                             style: {
-                                alignment: ["left", "center"],
+                                alignment: [ "left", "center" ],
                                 value: false
                             },
-                            param: ["realSize_Checkbox", [0, 0, 70, 22], "Realsize: "]
+                            param: [ "customPrefix_Checkbox", [ 0, 0, 100, globalHeight ], "Custom Prefix:" ]
                         }
                     }
                 },
                 group2: {
                     style: {
                         orientation: "stack",
-                        alignment: ["fill", "top"]
+                        alignment: [ "fill", "top" ]
                     },
                     group1: {
                         style: {
                             margins: 0,
                             spacing: 20,
                             orientation: "row",
-                            alignment: ["fill", "center"]
+                            alignment: [ "fill", "center" ]
                         },
-                        param: ["realSize", [0, 0, 200, globalHeight]],
-                        edittext1: {
+                        param: [ "customPrefix", [ 0, 0, 200, globalHeight ] ],
+                        edittext: {
                             style: {
-                                alignment: ["fill", "center"],
-                                enable: false
+                                alignment: [ "fill", "center" ],
+                                enable: true
                             },
-                            param: ["realWidth_Edittext", [0, 0, 26, globalHeight], "256"]
+                            param: [ "customName_Edittext", [ 0, 0, 100, globalHeight ], customName ]
                         },
-                        edittext2: {
+                        button: {
                             style: {
-                                alignment: ["fill", "center"],
-                                enable: false
+                                alignment: [ "right", "center" ],
+                                onClick: refreshCustomPrefix
                             },
-                            param: ["realHeight_Edittext", [0, 0, 26, globalHeight], "256"]
-                        }
-                    },
-                    group2: {
-                        style: {
-                            orientation: "row",
-                            alignment: ["center", "center"]
-                        },
-                        statictext1: {
-                            style: {
-                                alignment: ["center", "center"]
-                            },
-                            param: [undefined, [0, 0, 12, globalHeight], " x"]
+                            param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
                         }
                     }
-                },
-                button: {
-                    style: {
-                        alignment: ["right", "top"],
-                        onClick: refreshRealSize
-                    },
-                    param: [undefined, [0, 0, 22, globalHeight], "↺"]
                 }
             },
-            group3: {
+            group2: {
                 style: {
                     orientation: "stack",
-                    alignment: ["fill", "bottom"],
-                    bounds: [0, 0, 50, 26]
+                    alignment: [ "fill", "bottom" ],
+                    bounds: [ 0, 0, 50, 26 ]
                 },
                 group3: {
-                    param: ["textureName_group"],
+                    param: [ "textureName_group" ],
                     margins: 0,
                     spacing: 0,
                     style: {
                         orientation: "row",
-                        alignment: ["fill", "top"]
+                        alignment: [ "fill", "top" ]
                     },
                     group1: {
                         margins: 0,
                         spacing: 0,
                         style: {
                             orientation: "row",
-                            alignment: ["fill", "top"]
+                            alignment: [ "fill", "top" ]
                         },
                         statictext: {
                             style: {
-                                alignment: ["left", "center"]
+                                alignment: [ "left", "center" ]
                             },
-                            param: [undefined, [0, 0, 36, globalHeight], "Name: "]
+                            param: [ undefined, [ 0, 0, 36, globalHeight ], "Name: " ]
                         },
                         dropDownList: {
                             style: {
-                                alignment: ["fill", "fill"],
+                                alignment: [ "fill", "fill" ],
                                 selection: 0
                             },
-                            param: ["textureName_dropDownList", [0, 0, 75, globalHeight], textureNameArray]
+                            param: [ "textureName_dropDownList", [ 0, 0, 75, globalHeight ], textureNameArray ]
                         }
                     },
                     statictext: {
                         style: {
-                            alignment: ["right", "center"]
+                            alignment: [ "right", "center" ]
                         },
-                        param: ["digits_Statictext", [0, 0, 46, globalHeight], "Digits: 2"]
+                        param: [ "digits_Statictext", [ 0, 0, 46, globalHeight ], "Digits: 2" ]
                     },
                     scrollbar: {
                         style: {
-                            alignment: ["right", "center"],
+                            alignment: [ "right", "center" ],
                             selection: 0
                         },
-                        param: ["digits_Scrollbar", [0, 0, 120, 10], 2, 0, 6]
+                        param: [ "digits_Scrollbar", [ 0, 0, 120, 10 ], 2, 0, 6 ]
                     },
                     button: {
                         style: {
-                            alignment: ["right", "center"],
+                            alignment: [ "right", "center" ],
                             onClick: refreshScrollbar
                         },
-                        param: [undefined, [0, 0, 22, globalHeight], "↺"]
+                        param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
                     }
                 }
             }
         },
+        panel1: {
+            margins: 0,
+            spacing: 0,
+            style: {
+                orientation: "column",
+                alignment: [ "fill", "top" ],
+                text: "Texture Parameters"
+            },
+            group1: {
+                param: [ "textureSize_group" ],
+                margins: 0,
+                spacing: 0,
+                style: {
+                    orientation: "row",
+                    alignment: [ "fill", "top" ],
+                    bounds: [ 0, 0, 50, 26 ]
+                },
+                statictext: {
+                    style: {
+                        alignment: [ "left", "center" ]
+                    },
+                    param: [ undefined, [ 0, 0, 26, globalHeight ], "Size: " ]
+                },
+                group: {
+                    style: {
+                        orientation: "stack",
+                        alignment: [ "fill", "center" ]
+                    },
+                    group1: {
+                        style: {
+                            margins: 0,
+                            spacing: 20,
+                            orientation: "row",
+                            alignment: [ "fill", "center" ]
+                        },
+                        param: [ "textureSize", [ 0, 0, 200, globalHeight ] ],
+                        dropDownList1: {
+                            style: {
+                                alignment: [ "fill", "fill" ],
+                                selection: 6
+                            },
+                            param: [ "textureWidth_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
+                        },
+                        dropDownList2: {
+                            style: {
+                                alignment: [ "fill", "fill" ],
+                                selection: 6
+                            },
+                            param: [ "textureHeight_dropDownList", [ 0, 0, 50, globalHeight ], textureSizeArray ]
+                        }
+                    },
+                    group2: {
+                        style: {
+                            orientation: "row",
+                            alignment: [ "center", "center" ]
+                        },
+                        statictext1: {
+                            style: {
+                                alignment: [ "center", "center" ]
+                            },
+                            param: [ undefined, [ 0, 0, 12, globalHeight ], " x" ]
+                        }
+                    }
+                },
+                button: {
+                    style: {
+                        alignment: [ "right", "center" ],
+                        onClick: refreshTextureSize
+                    },
+                    param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
+                }
+            },
+            group2: {
+                param: [ "realSize_group" ],
+                margins: 0,
+                spacing: 0,
+                style: {
+                    orientation: "row",
+                    alignment: [ "fill", "bottom" ],
+                    bounds: [ 0, 0, 50, 26 ]
+                },
+                group1: {
+                    param: [ "realSize_group", [ 0, -6, 66, 22 ] ],
+                    style: {
+                        orientation: "stack",
+                        alignment: [ "left", "top" ]
+                    },
+                    group: {
+                        style: {
+                            orientation: "row",
+                            alignment: [ "left", "center" ]
+                        },
+                        checkbox: {
+                            style: {
+                                alignment: [ "left", "center" ],
+                                value: false
+                            },
+                            param: [ "realSize_Checkbox", [ 0, 0, 100, 22 ], "Realsize: " ]
+                        }
+                    }
+                },
+                group2: {
+                    style: {
+                        orientation: "stack",
+                        alignment: [ "fill", "top" ]
+                    },
+                    group1: {
+                        style: {
+                            margins: 0,
+                            spacing: 20,
+                            orientation: "row",
+                            alignment: [ "fill", "center" ]
+                        },
+                        param: [ "realSize", [ 0, 0, 200, globalHeight ] ],
+                        edittext1: {
+                            style: {
+                                alignment: [ "fill", "center" ],
+                                enable: false
+                            },
+                            param: [ "realWidth_Edittext", [ 0, 0, 26, globalHeight ], "256" ]
+                        },
+                        edittext2: {
+                            style: {
+                                alignment: [ "fill", "center" ],
+                                enable: false
+                            },
+                            param: [ "realHeight_Edittext", [ 0, 0, 26, globalHeight ], "256" ]
+                        }
+                    },
+                    group2: {
+                        style: {
+                            orientation: "row",
+                            alignment: [ "center", "center" ]
+                        },
+                        statictext1: {
+                            style: {
+                                alignment: [ "center", "center" ]
+                            },
+                            param: [ undefined, [ 0, 0, 12, globalHeight ], " x" ]
+                        }
+                    }
+                },
+                button: {
+                    style: {
+                        alignment: [ "right", "top" ],
+                        onClick: refreshRealSize
+                    },
+                    param: [ undefined, [ 0, 0, 22, globalHeight ], "↺" ]
+                }
+            }
+        },
         panel2: {
-            param: ["method_group"],
+            param: [ "method_group" ],
             margins: 0,
             spacing: 0,
             style: {
                 orientation: "row",
-                alignment: ["fill", "top"],
+                alignment: [ "fill", "top" ],
                 text: "Method"
             },
             button1: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: createComp
                 },
-                param: ["Create", [0, 0, 22, globalHeight], "Create"]
+                param: [ "Create", [ 0, 0, 22, globalHeight ], "Create" ]
             },
             button2: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: duplicateComp
                 },
-                param: ["Duplicate", [0, 0, 22, globalHeight], "Duplicate"]
+                param: [ "Duplicate", [ 0, 0, 22, globalHeight ], "Duplicate" ]
             },
             button3: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: changeComp
                 },
-                param: ["Apply", [0, 0, 22, globalHeight], "Apply"]
+                param: [ "Apply", [ 0, 0, 22, globalHeight ], "Apply" ]
             }
         },
         panel3: {
-            param: ["bg_group"],
+            param: [ "bg_group" ],
             margins: 0,
             spacing: 0,
             style: {
                 orientation: "row",
-                alignment: ["fill", "top"],
+                alignment: [ "fill", "top" ],
                 text: "BackGround"
             },
             button1: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: createBlackBg
                 },
-                param: ["BlackBg", [0, 0, 22, globalHeight], "BlackBg"]
+                param: [ "BlackBg", [ 0, 0, 22, globalHeight ], "BlackBg" ]
             },
             button2: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: createWhiteBg
                 },
-                param: ["WhiteBg", [0, 0, 22, globalHeight], "WhiteBg"]
+                param: [ "WhiteBg", [ 0, 0, 22, globalHeight ], "WhiteBg" ]
             },
             button3: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: createGreyBg
                 },
-                param: ["GreyBg", [0, 0, 22, globalHeight], "GreyBg"]
+                param: [ "GreyBg", [ 0, 0, 22, globalHeight ], "GreyBg" ]
             },
             button4: {
                 style: {
-                    alignment: ["fill", "fill"],
+                    alignment: [ "fill", "fill" ],
                     onClick: createNoBg
                 },
-                param: ["NoBg", [0, 0, 22, globalHeight], "NoBg"]
+                param: [ "NoBg", [ 0, 0, 22, globalHeight ], "NoBg" ]
             }
         },
         panel4: {
@@ -1214,89 +1277,89 @@
             spacing: 0,
             style: {
                 orientation: "stack",
-                alignment: ["fill", "top"],
+                alignment: [ "fill", "top" ],
                 text: "Render"
             },
             group5: {
-                param: ["render_group", [0, 0, 50, 22]],
+                param: [ "render_group", [ 0, 0, 50, 22 ] ],
                 margins: 0,
                 spacing: 0,
                 style: {
                     orientation: "column",
-                    alignment: ["fill", "top"]
+                    alignment: [ "fill", "top" ]
                 },
                 group1: {
                     style: {
                         orientation: "stack",
-                        alignment: ["left", "top"],
-                        bounds: [0, 0, 50, 30]
+                        alignment: [ "left", "top" ],
+                        bounds: [ 0, 0, 50, 30 ]
                     },
                     checkbox: {
                         style: {
-                            alignment: ["left", "bottom"],
+                            alignment: [ "left", "bottom" ],
                             value: true
                         },
-                        param: ["OpenFolder_Checkbox", undefined, "Open the texture folder after rendering."]
+                        param: [ "OpenFolder_Checkbox", undefined, "Open the texture folder after rendering." ]
                     }
                 },
                 group2: {
                     style: {
                         orientation: "row",
-                        alignment: ["fill", "top"]
+                        alignment: [ "fill", "top" ]
                     },
                     group: {
                         style: {
                             orientation: "stack",
-                            alignment: ["left", "top"]
+                            alignment: [ "left", "top" ]
                         },
                         group: {
-                            param: ["renderCheckbox_group", [0, -6, 300, 22]],
+                            param: [ "renderCheckbox_group", [ 0, -6, 300, 22 ] ],
                             style: {
                                 orientation: "row",
-                                alignment: ["fill", "top"]
+                                alignment: [ "fill", "top" ]
                             },
                             group: {
                                 style: {
                                     orientation: "row",
-                                    alignment: ["fill", "center"]
+                                    alignment: [ "fill", "center" ]
                                 },
                                 checkbox1: {
                                     style: {
-                                        alignment: ["left", "center"],
+                                        alignment: [ "left", "center" ],
                                         value: false
                                     },
-                                    param: ["PNG_Checkbox", undefined, "PNG"]
+                                    param: [ "PNG_Checkbox", undefined, "PNG" ]
                                 },
                                 checkbox2: {
                                     style: {
-                                        alignment: ["left", "center"],
+                                        alignment: [ "left", "center" ],
                                         value: false
                                     },
-                                    param: ["PNG_NoAlpha_Checkbox", undefined, "PNG(NoAlpha)"]
+                                    param: [ "PNG_NoAlpha_Checkbox", undefined, "PNG(NoAlpha)" ]
                                 },
                                 checkbox3: {
                                     style: {
-                                        alignment: ["left", "center"],
+                                        alignment: [ "left", "center" ],
                                         value: true
                                     },
-                                    param: ["TGA_Checkbox", undefined, "TGA"]
+                                    param: [ "TGA_Checkbox", undefined, "TGA" ]
                                 },
                                 checkbox4: {
                                     style: {
-                                        alignment: ["left", "center"],
+                                        alignment: [ "left", "center" ],
                                         value: false
                                     },
-                                    param: ["TGA_NoAlpha_Checkbox", undefined, "TGA(NoAlpha)"]
+                                    param: [ "TGA_NoAlpha_Checkbox", undefined, "TGA(NoAlpha)" ]
                                 }
                             }
                         }
                     },
                     button: {
                         style: {
-                            alignment: ["fill", "top"],
+                            alignment: [ "fill", "top" ],
                             onClick: render
                         },
-                        param: ["Render", [0, 0, 22, globalHeight], "Render"]
+                        param: [ "Render", [ 0, 0, 22, globalHeight ], "Render" ]
                     }
                 }
             }
@@ -1320,25 +1383,50 @@
     var TGA_NoAlpha_Checkbox = elements.getElementById("TGA_NoAlpha_Checkbox");
     var digits_Statictext = elements.getElementById("digits_Statictext");
     var digits_Scrollbar = elements.getElementById("digits_Scrollbar");
+    var customName_Edittext = elements.getElementById("customName_Edittext");
+    var customPrefix_Checkbox = elements.getElementById("customPrefix_Checkbox");
+    customName_Edittext.enabled = customPrefix_Checkbox.value;
+    customPrefix_Checkbox.onClick = function() {
+        customName_Edittext.enabled = customPrefix_Checkbox.value;
+        if (!customPrefix_Checkbox.value) {
+            customName = "T_UI";
+        } else {
+            customName = customName_Edittext.text;
+        }
+        textureRegex = new RegExp("^" + customName + "_[a-zA-Z]+_\\d+x\\d+_\\d+$");
+    };
+    function refreshCustomPrefix() {
+        if (customPrefix_Checkbox.value) {
+            customName_Edittext.text = "T_UI";
+            customName = "T_UI";
+            textureRegex = new RegExp("^" + customName + "_[a-zA-Z]+_\\d+x\\d+_\\d+$");
+        }
+    }
+    customName_Edittext.onChange = function() {
+        if (customPrefix_Checkbox.value) {
+            customName = customName_Edittext.text;
+            textureRegex = new RegExp("^" + customName + "_[a-zA-Z]+_\\d+x\\d+_\\d+$");
+        }
+    };
     realWidth_Edittext.enabled = realHeight_Edittext.enabled = false;
     digits_Scrollbar.onChange = digits_Scrollbar.onChanging = refreshDigitsText;
     realSize_Checkbox.onClick = enableRealsize;
-    PNG_Checkbox.onClick = function () {
+    PNG_Checkbox.onClick = function() {
         if (PNG_Checkbox.value && PNG_NoAlpha_Checkbox.value) {
             PNG_NoAlpha_Checkbox.value = false;
         }
     };
-    PNG_NoAlpha_Checkbox.onClick = function () {
+    PNG_NoAlpha_Checkbox.onClick = function() {
         if (PNG_Checkbox.value && PNG_NoAlpha_Checkbox.value) {
             PNG_Checkbox.value = false;
         }
     };
-    TGA_Checkbox.onClick = function () {
+    TGA_Checkbox.onClick = function() {
         if (TGA_Checkbox.value && TGA_NoAlpha_Checkbox.value) {
             TGA_NoAlpha_Checkbox.value = false;
         }
     };
-    TGA_NoAlpha_Checkbox.onClick = function () {
+    TGA_NoAlpha_Checkbox.onClick = function() {
         if (TGA_Checkbox.value && TGA_NoAlpha_Checkbox.value) {
             TGA_Checkbox.value = false;
         }
@@ -1359,7 +1447,7 @@
             exist: false,
             folder: folder
         };
-        eachItems(folder, function (file) {
+        eachItems(folder, function(file) {
             if (file.name === inputName && isFolderItem(file)) {
                 result.exist = true;
                 result.folder = file;
@@ -1388,7 +1476,7 @@
         return finalData.slice(-bits);
     }
     function createComp() {
-        setUndoGroup("Create comp", function () {
+        setUndoGroup("Create comp", function() {
             activeItem = getActiveItem();
             items = app.project.items;
             rootFolder = app.project.rootFolder;
@@ -1405,7 +1493,7 @@
         });
     }
     function duplicateComp() {
-        setUndoGroup("Duplicate comp", function () {
+        setUndoGroup("Duplicate comp", function() {
             activeItem = getActiveItem();
             if (!activeItem) {
                 return;
@@ -1419,14 +1507,14 @@
             var finalCompName = getFinalCompName(compName, realSize_Checkbox.value ? realWidth_Edittext.text : compWidth, realSize_Checkbox.value ? realHeight_Edittext.text : compHeight, parentFolder);
             var targetComp = items.addComp(finalCompName, compWidth, compHeight, 1, 1 / 30, 30);
             targetComp.parentFolder = parentFolder;
-            eachLayersRight(originComp, function (layer) {
+            eachLayersRight(originComp, function(layer) {
                 layer.copyToComp(targetComp);
             });
             targetComp.openInViewer();
         });
     }
     function changeComp() {
-        setUndoGroup("Change comp", function () {
+        setUndoGroup("Change comp", function() {
             activeItem = getActiveItem();
             var categoryFolderIndex = textureName_dropDownList.selection.index;
             var categoryFolderName = textureNameArray[categoryFolderIndex];
@@ -1443,9 +1531,9 @@
             targetComp.openInViewer();
             var existBg = false;
             var bgComment = "TextureBackGround";
-            var bgColor = [1, 1, 1];
+            var bgColor = [ 1, 1, 1 ];
             var bgColorName = "None";
-            eachLayers(targetComp, function (layer) {
+            eachLayers(targetComp, function(layer) {
                 if (layer.comment == bgComment) {
                     existBg = true;
                     layer.locked = false;
@@ -1457,10 +1545,10 @@
                 return;
             }
             if (bgColorName == "Black") {
-                bgColor = [0, 0, 0];
+                bgColor = [ 0, 0, 0 ];
             }
             if (bgColorName == "White") {
-                bgColor = [1, 1, 1];
+                bgColor = [ 1, 1, 1 ];
             }
             createTargetColorBg(bgColor, bgColorName);
         });
@@ -1469,23 +1557,23 @@
         return targetComp.layers.addSolid(color, name, toNumber(compWidth), toNumber(compHeight), 1);
     }
     function createBlackBg() {
-        setUndoGroup("Create Black Background", function () {
-            createTargetColorBg([0, 0, 0], "Black");
+        setUndoGroup("Create Black Background", function() {
+            createTargetColorBg([ 0, 0, 0 ], "Black");
         });
     }
     function createWhiteBg() {
-        setUndoGroup("Create Black Background", function () {
-            createTargetColorBg([1, 1, 1], "White");
+        setUndoGroup("Create Black Background", function() {
+            createTargetColorBg([ 1, 1, 1 ], "White");
         });
     }
     function createGreyBg() {
-        setUndoGroup("Create Black Background", function () {
-            createTargetColorBg([0.5, 0.5, 0.5], "Grey");
+        setUndoGroup("Create Black Background", function() {
+            createTargetColorBg([ 0.5, 0.5, 0.5 ], "Grey");
         });
     }
     function createNoBg() {
-        setUndoGroup("Create Black Background", function () {
-            createTargetColorBg([1, 1, 1], "None");
+        setUndoGroup("Create Black Background", function() {
+            createTargetColorBg([ 1, 1, 1 ], "None");
         });
     }
     function createTargetColorBg(targetColor, targetColorName) {
@@ -1499,7 +1587,7 @@
         var bgName = "".concat(compWidth, "x").concat(compHeight, " ").concat(targetColorName);
         var bgComment = "TextureBackGround";
         var solidsFolder = getSolidsFolder();
-        eachLayers(activeItem, function (layer) {
+        eachLayers(activeItem, function(layer) {
             if (layer.comment === bgComment) {
                 layer.locked = false;
                 layer.remove();
@@ -1510,7 +1598,7 @@
         }
         var solidsSource;
         if (solidsFolder) {
-            eachItems(solidsFolder, function (solidItem) {
+            eachItems(solidsFolder, function(solidItem) {
                 if (solidItem.name === bgName && solidItem.comment === bgComment) {
                     existBgSource = true;
                     solidsSource = solidItem;
@@ -1533,7 +1621,7 @@
     }
     function getSolidsFolder() {
         var solidsFolder;
-        eachItems(rootFolder, function (folderItem) {
+        eachItems(rootFolder, function(folderItem) {
             if ((folderItem.name === "Solids" || folderItem.name === "solids") && isFolderItem(folderItem)) {
                 solidsFolder = folderItem;
             }
@@ -1604,7 +1692,7 @@
         }
         startRender();
         if (renderFolder.exists) {
-            eachFiles(renderFolder, function (file) {
+            eachFiles(renderFolder, function(file) {
                 var regex = /\.(png|tga)\d{5}/g;
                 if (file.displayName.match(regex)) {
                     fixRenderFile(file);
@@ -1620,7 +1708,7 @@
     }
     function getFinalCompName(compName, compWidth, compHeight, parentFolder) {
         var compIndex = 0;
-        eachItems(parentFolder, function (compItem) {
+        eachItems(parentFolder, function(compItem) {
             if (!textureRegex.test(compItem.name)) {
                 return;
             }
@@ -1642,7 +1730,7 @@
         }
         var templatesArray = targetOutputModule.templates;
         var existTemplate = false;
-        forEach(templatesArray, function (value) {
+        forEach(templatesArray, function(value) {
             if (value === targetTemplateName) {
                 existTemplate = true;
             }
@@ -1652,7 +1740,7 @@
         }
         if (!existTemplate) {
             alert("Please create ".concat(targetTemplateName, " output module first."));
-            protectiveTry(function () {
+            protectiveTry(function() {
                 app.executeCommand(2150);
             });
         }
@@ -1722,7 +1810,7 @@
         }
         var oldName = renderFile.displayName;
         var regex = /\.(png|tga)\d{5}/g;
-        var newName = oldName.replace(regex, function (match) {
+        var newName = oldName.replace(regex, function(match) {
             var extensionMatch = match.match(/\.(png|tga)/);
             return extensionMatch ? extensionMatch[0] : match;
         });
@@ -1739,7 +1827,7 @@
     function permissionDialog() {
         if (!isSecurityPrefSet()) {
             alert("This script requires access to write files.\n Go to the  General  panel of the application preferences and make sure 「Allow Scripts to Write Files and Access Network」 is checked.");
-            protectiveTry(function () {
+            protectiveTry(function() {
                 app.executeCommand(3131);
             });
         }
