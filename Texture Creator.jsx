@@ -1149,7 +1149,7 @@
                                 alignment: [ "left", "center" ],
                                 value: false
                             },
-                            param: [ "realSize_Checkbox", [ 0, 0, 100, 22 ], "Realsize: " ]
+                            param: [ "realSize_Checkbox", [ 0, 0, 66, 22 ], "Realsize:" ]
                         }
                     }
                 },

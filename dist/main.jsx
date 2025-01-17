@@ -1,4 +1,4 @@
-// 2025/1/17 15:22:40
+// 2025/1/17 15:54:56
 (function() {
     var arrayProto = Array.prototype;
     var objectProto = Object.prototype;
@@ -1149,7 +1149,7 @@
                                 alignment: [ "left", "center" ],
                                 value: false
                             },
-                            param: [ "realSize_Checkbox", [ 0, 0, 100, 22 ], "Realsize: " ]
+                            param: [ "realSize_Checkbox", [ 0, 0, 66, 22 ], "Realsize:" ]
                         }
                     }
                 },
